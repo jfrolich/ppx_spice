@@ -8,10 +8,11 @@
   ],
   "package-specs": [
     {
-      "module": "commonjs",
+      "module": "esmodule",
       "in-source": true
     }
   ],
+  "suffix": ".mjs",
   "dependencies": ["@jfrolich/ppx-spice"],
   "dev-dependencies": [],
   "ppx-flags": ["@jfrolich/ppx-spice/ppx"],
