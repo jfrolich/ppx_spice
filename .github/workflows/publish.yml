@@ -40,7 +40,7 @@ jobs:
       options: --user root
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           repository: ${{ env.TARGET_REPO }}
           ref: ${{ env.TARGET_REF }}
@@ -70,7 +70,7 @@ jobs:
     runs-on: ubuntu-24.04-arm
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           repository: ${{ env.TARGET_REPO }}
           ref: ${{ env.TARGET_REF }}
@@ -110,7 +110,7 @@ jobs:
       ocaml-compiler: 4.14.2
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           repository: ${{ env.TARGET_REPO }}
           ref: ${{ env.TARGET_REF }}
@@ -147,7 +147,7 @@ jobs:
       ocaml-compiler: 4.14.2
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           repository: ${{ env.TARGET_REPO }}
           ref: ${{ env.TARGET_REF }}
@@ -187,7 +187,7 @@ jobs:
           - 4.14.2
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           repository: ${{ env.TARGET_REPO }}
           ref: ${{ env.TARGET_REF }}
@@ -219,7 +219,7 @@ jobs:
     name: (only on release) Publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           repository: ${{ env.TARGET_REPO }}
           ref: ${{ env.TARGET_REF }}
