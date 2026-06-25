@@ -68,16 +68,6 @@ jobs:
   build_linux_arm64:
     name: ubuntu-24.04-arm
     runs-on: ubuntu-24.04-arm
-    defaults:
-      run:
-        working-directory: src
-    strategy:
-      matrix:
-        ocaml-compiler:
-          - 4.14.2
-    container:
-      image: ocaml/opam:alpine-3.16-ocaml-4.14
-      options: --user root
 
     steps:
       - uses: actions/checkout@v3
@@ -85,18 +75,23 @@ jobs:
           repository: ${{ env.TARGET_REPO }}
           ref: ${{ env.TARGET_REF }}
 
-      - name: Opam init
-        run: opam init -a --disable-sandboxing --compiler=4.14.2
-
-      - name: Install deps
-        run: opam install . --deps-only --with-test
-
-      - name: Build
-        run: opam exec -- dune build --profile static
-
-      - name: Copy built PPX file
+      # JavaScript actions (checkout, upload-artifact) cannot run inside an
+      # Alpine (musl) container on arm64 runners, so run the build via a plain
+      # `docker run` instead of a job-level `container:`. The host runner stays
+      # glibc-based (where the JS actions work) while the static musl binary is
+      # produced inside Alpine.
+      - name: Build static PPX in Alpine container
         run: |
-          mv ./_build/default/bin/bin.exe ppx.exe
+          docker run --rm --user root \
+            -v "${{ github.workspace }}:/repo" -w /repo/src \
+            ocaml/opam:alpine-3.16-ocaml-4.14 sh -c '
+              set -eux
+              opam init -a --disable-sandboxing --compiler=4.14.2
+              opam install . --deps-only --with-test
+              opam exec -- dune build --profile static
+              cp ./_build/default/bin/bin.exe ppx.exe
+              chmod 0644 ppx.exe
+            '
 
       - name: (only on release) Upload artifacts ubuntu-24.04-arm
         uses: actions/upload-artifact@master
