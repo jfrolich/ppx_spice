@@ -20,7 +20,6 @@ env:
   NPM_TAG: ${{ github.event.inputs.npm_tag || 'latest' }}
 
 permissions:
-  id-token: write  # Required for OIDC publish to npm
   contents: read
 
 jobs:
