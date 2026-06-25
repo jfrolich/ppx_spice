@@ -35,7 +35,11 @@ const installWindowsBinary = () => {
 
 switch (process.platform) {
   case "linux":
-    installMacLinuxBinary("ppx-linux.exe");
+    if (process.arch === "arm64") {
+      installMacLinuxBinary("ppx-linux-arm64.exe");
+    } else {
+      installMacLinuxBinary("ppx-linux.exe");
+    }
     break;
   case "darwin":
     if (process.arch === "arm64") {
