@@ -20,6 +20,7 @@ env:
   NPM_TAG: ${{ github.event.inputs.npm_tag || 'latest' }}
 
 permissions:
+  id-token: write  # OIDC trusted publishing to npm (no token needed)
   contents: read
 
 jobs:
@@ -225,9 +226,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          registry-url: "https://registry.npmjs.org"
 
-      - name: Update npm for OIDC support
+      - name: Update npm for OIDC trusted publishing
         run: npm install -g npm@latest
 
       - name: Download linux artifacts
@@ -285,8 +285,6 @@ jobs:
 
       - name: Publish
         if: success()
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           if [ "${NPM_TAG:-latest}" = "latest" ]; then
             npm publish --access public
