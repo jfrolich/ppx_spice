@@ -82,12 +82,12 @@ jobs:
       # produced inside Alpine.
       - name: Build static PPX in Alpine container
         run: |
-          docker run --rm --user root \
-            -v "${{ github.workspace }}:/repo" -w /repo/src \
-            ocaml/opam:alpine-3.16-ocaml-4.14 sh -c '
-              set -eux
-              opam init -a --disable-sandboxing --compiler=4.14.2
-              opam install . --deps-only --with-test
+          docker run --rm \
+            -v "${{ github.workspace }}:/repo" \
+            ocaml/opam:alpine-3.16-ocaml-4.14 sh -exc '
+              sudo chown -R opam:opam /repo
+              cd /repo/src
+              opam install . --deps-only --with-test --yes
               opam exec -- dune build --profile static
               cp ./_build/default/bin/bin.exe ppx.exe
               chmod 0644 ppx.exe
