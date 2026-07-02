@@ -212,6 +212,21 @@ Zora.test("record with option null value", t => {
   });
 });
 
+Zora.test("record with optional null field receiving explicit null", t => {
+  let sampleRecord = {
+    o: undefined,
+    n: null,
+    on: null,
+    n2: "n2"
+  };
+  let encoded = Records.t2_encode(sampleRecord);
+  let decoded = Records.t2_decode(encoded);
+  testEqual(t, `roundtrip encode->decode for optional Null.t field with null`, decoded, {
+    TAG: "Ok",
+    _0: sampleRecord
+  });
+});
+
 Zora.test("record with spice.default", t => {
   let sample = {};
   let sampleJson = sample;

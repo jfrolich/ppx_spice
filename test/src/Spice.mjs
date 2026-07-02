@@ -270,6 +270,17 @@ function nullFromJson(decoder, json) {
   }
 }
 
+function optionalNullFromJson(decoder, json) {
+  if (json === null) {
+    return {
+      TAG: "Ok",
+      _0: null
+    };
+  } else {
+    return Stdlib_Result.map(decoder(json), v => (v));
+  }
+}
+
 function resultToJson(okEncoder, errorEncoder, result) {
   let tmp;
   tmp = result.TAG === "Ok" ? [
@@ -459,6 +470,7 @@ export {
   optionFromJson,
   nullToJson,
   nullFromJson,
+  optionalNullFromJson,
   resultToJson,
   resultFromJson,
   dictToJson,

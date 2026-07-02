@@ -14,10 +14,10 @@
   ],
   "suffix": ".mjs",
   "ppx-flags": [
-    "@mununki/ppx-spice/ppx"
+    "@jfrolich/ppx-spice/ppx"
   ],
   "dependencies": [
-    "@mununki/ppx-spice"
+    "@jfrolich/ppx-spice"
   ],
   "warnings": {
     "error": true
