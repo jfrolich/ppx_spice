@@ -1,6 +1,10 @@
 # CHANGELOG
 
-## 0.5.0 (unreleased)
+## 0.5.1
+
+- Suppress unused-value warnings for the generated `*_encodeJson` value encoders in modules with an interface
+
+## 0.5.0
 
 Synced with upstream mununki/ppx_spice main (everything through the unreleased inline-record support):
 

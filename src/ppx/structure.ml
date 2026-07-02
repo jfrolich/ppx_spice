@@ -36,13 +36,26 @@ let generate_codec_decls type_name param_names ?value_encoder
         vbs @ [ Vb.mk encoder_pat (add_params encoder_param_names encoder) ]
   in
 
+  (* The value encoder is only referenced from other generated codecs, so
+     suppress unused-value warnings in modules with an interface. *)
+  let suppress_unused =
+    Utils.attr_warning (Exp.constant (Pconst_string ("-32", Location.none, None)))
+  in
   let vbs =
     match (encoder, value_encoder) with
     | None, _ -> vbs
     | Some encoder, None ->
-        vbs @ [ Vb.mk value_encoder_pat (add_params encoder_param_names encoder) ]
+        vbs
+        @ [
+            Vb.mk ~attrs:[ suppress_unused ] value_encoder_pat
+              (add_params encoder_param_names encoder);
+          ]
     | _, Some encoder ->
-        vbs @ [ Vb.mk value_encoder_pat (add_params encoder_param_names encoder) ]
+        vbs
+        @ [
+            Vb.mk ~attrs:[ suppress_unused ] value_encoder_pat
+              (add_params encoder_param_names encoder);
+          ]
   in
 
   let vbs =
