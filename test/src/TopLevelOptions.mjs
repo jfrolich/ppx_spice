@@ -2,8 +2,6 @@
 
 import * as Spice from "./Spice.mjs";
 import * as Stdlib_Option from "@rescript/runtime/lib/es6/Stdlib_Option.js";
-import * as Stdlib_Result from "@rescript/runtime/lib/es6/Stdlib_Result.js";
-import * as Primitive_option from "@rescript/runtime/lib/es6/Primitive_option.js";
 
 function mystring_encode(v) {
   return Spice.optionToJson(Spice.stringToJson, v);
@@ -224,7 +222,7 @@ function optionRecord_decode(v) {
   }
   let title = Stdlib_Option.getOr(Stdlib_Option.map(v["title"], Spice.stringFromJson), Spice.error(undefined, "title" + " missing", v));
   if (title.TAG === "Ok") {
-    let optionalAlias = Stdlib_Option.getOr(Stdlib_Option.map(v["optionalAlias"], json => Stdlib_Result.map(Spice.optionFromJson(Spice.stringFromJson, json), v => Primitive_option.some(v))), {
+    let optionalAlias = Stdlib_Option.getOr(Stdlib_Option.map(v["optionalAlias"], extra => Spice.optionalFieldFromJson(mystring_decode, extra)), {
       TAG: "Ok",
       _0: undefined
     });

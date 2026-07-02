@@ -2,7 +2,6 @@
 
 import * as Spice from "./Spice.mjs";
 import * as Stdlib_Option from "@rescript/runtime/lib/es6/Stdlib_Option.js";
-import * as Stdlib_Result from "@rescript/runtime/lib/es6/Stdlib_Result.js";
 
 function t_encode(v) {
   return Object.fromEntries(Spice.filterOptional([[
@@ -75,15 +74,15 @@ function response_decode(v) {
   if (typeof v !== "object" || v === null || Array.isArray(v)) {
     return Spice.error(undefined, "Not an object", v);
   }
-  let data = Stdlib_Option.getOr(Stdlib_Option.map(v["data"], json => Stdlib_Result.map({
+  let data = Stdlib_Option.getOr(Stdlib_Option.map(v["data"], extra => Spice.optionalFieldFromJson(v => ({
     TAG: "Ok",
-    _0: json
-  }, v => v)), {
+    _0: v
+  }), extra)), {
     TAG: "Ok",
     _0: undefined
   });
   if (data.TAG === "Ok") {
-    let errors = Stdlib_Option.getOr(Stdlib_Option.map(v["errors"], json => Stdlib_Result.map(Spice.arrayFromJson(t_decode, json), v => v)), {
+    let errors = Stdlib_Option.getOr(Stdlib_Option.map(v["errors"], extra => Spice.optionalFieldFromJson(extra => Spice.arrayFromJson(t_decode, extra), extra)), {
       TAG: "Ok",
       _0: undefined
     });

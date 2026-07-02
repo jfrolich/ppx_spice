@@ -2,8 +2,6 @@
 
 import * as Spice from "./Spice.mjs";
 import * as Stdlib_Option from "@rescript/runtime/lib/es6/Stdlib_Option.js";
-import * as Stdlib_Result from "@rescript/runtime/lib/es6/Stdlib_Result.js";
-import * as Primitive_option from "@rescript/runtime/lib/es6/Primitive_option.js";
 
 function t_encode(v) {
   return Object.fromEntries(Spice.filterOptional([
@@ -137,12 +135,12 @@ function tOp_decode(v) {
   if (typeof v !== "object" || v === null || Array.isArray(v)) {
     return Spice.error(undefined, "Not an object", v);
   }
-  let label = Stdlib_Option.getOr(Stdlib_Option.map(v["label"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+  let label = Stdlib_Option.getOr(Stdlib_Option.map(v["label"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
     TAG: "Ok",
     _0: undefined
   });
   if (label.TAG === "Ok") {
-    let value = Stdlib_Option.getOr(Stdlib_Option.map(v["value"], json => Stdlib_Result.map(Spice.intFromJson(json), v => v)), {
+    let value = Stdlib_Option.getOr(Stdlib_Option.map(v["value"], extra => Spice.optionalFieldFromJson(Spice.intFromJson, extra)), {
       TAG: "Ok",
       _0: undefined
     });
@@ -216,14 +214,14 @@ function t2_decode(v) {
   if (typeof v !== "object" || v === null || Array.isArray(v)) {
     return Spice.error(undefined, "Not an object", v);
   }
-  let o = Stdlib_Option.getOr(Stdlib_Option.map(v["o"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+  let o = Stdlib_Option.getOr(Stdlib_Option.map(v["o"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
     TAG: "Ok",
     _0: undefined
   });
   if (o.TAG === "Ok") {
     let n = Stdlib_Option.getOr(Stdlib_Option.map(v["n"], extra => Spice.nullFromJson(Spice.stringFromJson, extra)), Spice.error(undefined, "n" + " missing", v));
     if (n.TAG === "Ok") {
-      let on = Stdlib_Option.getOr(Stdlib_Option.map(v["on"], json => Stdlib_Result.map(Spice.nullFromJson(Spice.stringFromJson, json), v => Primitive_option.some(v))), {
+      let on = Stdlib_Option.getOr(Stdlib_Option.map(v["on"], extra => Spice.optionalFieldFromJson(extra => Spice.nullFromJson(Spice.stringFromJson, extra), extra)), {
         TAG: "Ok",
         _0: undefined
       });
@@ -290,7 +288,7 @@ function t3_decode(v) {
     _0: 0
   });
   if (value.TAG === "Ok") {
-    let value2 = Stdlib_Option.getOr(Stdlib_Option.map(v["value2"], json => Stdlib_Result.map(Spice.intFromJson(json), v => v)), {
+    let value2 = Stdlib_Option.getOr(Stdlib_Option.map(v["value2"], extra => Spice.optionalFieldFromJson(Spice.intFromJson, extra)), {
       TAG: "Ok",
       _0: 1
     });
@@ -354,12 +352,12 @@ function t4_decode(v) {
   }
   let a = Stdlib_Option.getOr(Stdlib_Option.map(v["a"], Spice.bigintFromJson), Spice.error(undefined, "a" + " missing", v));
   if (a.TAG === "Ok") {
-    let b = Stdlib_Option.getOr(Stdlib_Option.map(v["b"], json => Stdlib_Result.map(Spice.bigintFromJson(json), v => v)), {
+    let b = Stdlib_Option.getOr(Stdlib_Option.map(v["b"], extra => Spice.optionalFieldFromJson(Spice.bigintFromJson, extra)), {
       TAG: "Ok",
       _0: undefined
     });
     if (b.TAG === "Ok") {
-      let c = Stdlib_Option.getOr(Stdlib_Option.map(v["c"], json => Stdlib_Result.map(Spice.bigintFromJson(json), v => v)), {
+      let c = Stdlib_Option.getOr(Stdlib_Option.map(v["c"], extra => Spice.optionalFieldFromJson(Spice.bigintFromJson, extra)), {
         TAG: "Ok",
         _0: undefined
       });
@@ -403,7 +401,7 @@ function t5_decode(v) {
   if (typeof v !== "object" || v === null || Array.isArray(v)) {
     return Spice.error(undefined, "Not an object", v);
   }
-  let maybeNull = Stdlib_Option.getOr(Stdlib_Option.map(v["maybeNull"], json => Stdlib_Result.map(Spice.nullFromJson(Spice.stringFromJson, json), v => Primitive_option.some(v))), {
+  let maybeNull = Stdlib_Option.getOr(Stdlib_Option.map(v["maybeNull"], extra => Spice.optionalFieldFromJson(extra => Spice.nullFromJson(Spice.stringFromJson, extra), extra)), {
     TAG: "Ok",
     _0: undefined
   });

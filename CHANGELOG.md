@@ -7,7 +7,7 @@ Synced with upstream mununki/ppx_spice main (everything through the unreleased i
 - Support inline records in variant constructors https://github.com/mununki/ppx_spice/pull/125
 - Fix parameterized type codec arity https://github.com/mununki/ppx_spice/pull/123
 - Fix option encoding across top-level and nested JSON contexts https://github.com/mununki/ppx_spice/pull/122
-  - BREAKING: a JSON `null` value for an `option`/optional record field is now a decode error instead of `None`; use `Null.t` / `Nullable.t` for fields that can be `null`.
+  - Fork divergence: a JSON `null` for an `option`/optional record field defers to the inner decoder (`Null.t` and nested option fields keep it, matching upstream) but decodes to `None` instead of erroring when the inner type cannot represent null (`Spice.optionalFieldFromJson`). Upstream fails the decode; this fork stays tolerant so legacy data with explicit nulls keeps decoding.
   - The optional `Null.t` null-decoding fix from 0.3.5 is preserved (upstream now has an equivalent test).
 - Support `result`, `dict` type literals https://github.com/mununki/ppx_spice/pull/119
 - Include nested error path in record field decode errors https://github.com/mununki/ppx_spice/pull/118

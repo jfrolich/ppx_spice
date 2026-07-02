@@ -457,12 +457,12 @@ function inlineRecordWithOptional_decode(v) {
     if (typeof v$1 === "object" && v$1 !== null && !Array.isArray(v$1)) {
       let name = Stdlib_Option.getOr(Stdlib_Option.map(v$1["name"], Spice.stringFromJson), Spice.error(undefined, "name" + " missing", v$1));
       if (name.TAG === "Ok") {
-        let maybe = Stdlib_Option.getOr(Stdlib_Option.map(v$1["maybe"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+        let maybe = Stdlib_Option.getOr(Stdlib_Option.map(v$1["maybe"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
           TAG: "Ok",
           _0: undefined
         });
         if (maybe.TAG === "Ok") {
-          let optional = Stdlib_Option.getOr(Stdlib_Option.map(v$1["optional"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+          let optional = Stdlib_Option.getOr(Stdlib_Option.map(v$1["optional"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
             TAG: "Ok",
             _0: undefined
           });

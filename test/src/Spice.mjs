@@ -281,6 +281,24 @@ function optionalNullFromJson(decoder, json) {
   }
 }
 
+function optionalFieldFromJson(decoder, json) {
+  if (json !== null) {
+    return Stdlib_Result.map(decoder(json), v => Primitive_option.some(v));
+  }
+  let v = decoder(json);
+  if (v.TAG === "Ok") {
+    return {
+      TAG: "Ok",
+      _0: Primitive_option.some(v._0)
+    };
+  } else {
+    return {
+      TAG: "Ok",
+      _0: undefined
+    };
+  }
+}
+
 function resultToJson(okEncoder, errorEncoder, result) {
   let tmp;
   tmp = result.TAG === "Ok" ? [
@@ -471,6 +489,7 @@ export {
   nullToJson,
   nullFromJson,
   optionalNullFromJson,
+  optionalFieldFromJson,
   resultToJson,
   resultFromJson,
   dictToJson,

@@ -142,11 +142,10 @@ let generate_decoder decls unboxed =
             | JSON.Object dict -> [%e generate_nested_switches decls]
             | _ -> Spice.error "Not an object" v]
 
-let wrap_decoder_with_some decode =
-  let wrap_some = Utils.expr_func ~arity:1 [%expr fun v -> Some(v)] in
-  Utils.expr_func ~arity:1
-    [%expr fun json -> Result.map ([%e decode] json) [%e wrap_some]]
-
+(* Diverges from upstream (mununki/ppx_spice#122): a JSON null for an
+   option/optional record field defers to the inner decoder (Null.t and
+   nested option fields keep it) but decodes to None instead of erroring
+   when the inner type cannot represent null. *)
 let make_omittable_codecs codecs =
   let add_attrs attrs e = { e with pexp_attributes = attrs } in
   match codecs with
@@ -154,13 +153,19 @@ let make_omittable_codecs codecs =
       ( Some
           (add_attrs [ Utils.attr_partial ]
              [%expr Spice.optionToJson [%e encode]]),
-        Some (wrap_decoder_with_some decode) )
+        Some
+          (add_attrs [ Utils.attr_partial ]
+             [%expr Spice.optionalFieldFromJson [%e decode]]) )
   | Some encode, None ->
       ( Some
           (add_attrs [ Utils.attr_partial ]
              [%expr Spice.optionToJson [%e encode]]),
         None )
-  | None, Some decode -> (None, Some (wrap_decoder_with_some decode))
+  | None, Some decode ->
+      ( None,
+        Some
+          (add_attrs [ Utils.attr_partial ]
+             [%expr Spice.optionalFieldFromJson [%e decode]]) )
   | None, None -> codecs
 
 let parse_decl ?field generator_settings

@@ -2,7 +2,6 @@
 
 import * as Spice from "./Spice.mjs";
 import * as Stdlib_Option from "@rescript/runtime/lib/es6/Stdlib_Option.js";
-import * as Stdlib_Result from "@rescript/runtime/lib/es6/Stdlib_Result.js";
 
 function te_encode(v) {
   let extra = v.nickname;
@@ -38,7 +37,7 @@ function td_decode(v) {
   }
   let name = Stdlib_Option.getOr(Stdlib_Option.map(v["name"], Spice.stringFromJson), Spice.error(undefined, "name" + " missing", v));
   if (name.TAG === "Ok") {
-    let nickname = Stdlib_Option.getOr(Stdlib_Option.map(v["nickname"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+    let nickname = Stdlib_Option.getOr(Stdlib_Option.map(v["nickname"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
       TAG: "Ok",
       _0: undefined
     });

@@ -2,8 +2,6 @@
 
 import * as Spice from "./Spice.mjs";
 import * as Stdlib_Option from "@rescript/runtime/lib/es6/Stdlib_Option.js";
-import * as Stdlib_Result from "@rescript/runtime/lib/es6/Stdlib_Result.js";
-import * as Primitive_option from "@rescript/runtime/lib/es6/Primitive_option.js";
 
 function dataObject_encode(encoder_data) {
   return v => (Object.fromEntries(Spice.filterOptional([[
@@ -128,7 +126,7 @@ function nestedObject_decode(decoder_data) {
     }
     let items = Stdlib_Option.getOr(Stdlib_Option.map(v["items"], extra => Spice.arrayFromJson(dataObject_decode(decoder_data), extra)), Spice.error(undefined, "items" + " missing", v));
     if (items.TAG === "Ok") {
-      let selected = Stdlib_Option.getOr(Stdlib_Option.map(v["selected"], json => Stdlib_Result.map(decoder_data(json), v => Primitive_option.some(v))), {
+      let selected = Stdlib_Option.getOr(Stdlib_Option.map(v["selected"], extra => Spice.optionalFieldFromJson(decoder_data, extra)), {
         TAG: "Ok",
         _0: undefined
       });

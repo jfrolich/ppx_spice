@@ -2,7 +2,6 @@
 
 import * as Spice from "./Spice.mjs";
 import * as Stdlib_Option from "@rescript/runtime/lib/es6/Stdlib_Option.js";
-import * as Stdlib_Result from "@rescript/runtime/lib/es6/Stdlib_Result.js";
 
 function t0_encode(v) {
   let extra = v.b;
@@ -38,7 +37,7 @@ function t0_decode(v) {
   }
   let a = Stdlib_Option.getOr(Stdlib_Option.map(v["a"], Spice.intFromJson), Spice.error(undefined, "a" + " missing", v));
   if (a.TAG === "Ok") {
-    let b = Stdlib_Option.getOr(Stdlib_Option.map(v["b"], json => Stdlib_Result.map(Spice.intFromJson(json), v => v)), {
+    let b = Stdlib_Option.getOr(Stdlib_Option.map(v["b"], extra => Spice.optionalFieldFromJson(Spice.intFromJson, extra)), {
       TAG: "Ok",
       _0: undefined
     });
@@ -92,7 +91,7 @@ function t1_decode(v) {
   }
   let a = Stdlib_Option.getOr(Stdlib_Option.map(v["a"], Spice.intFromJson), Spice.error(undefined, "a" + " missing", v));
   if (a.TAG === "Ok") {
-    let bs = Stdlib_Option.getOr(Stdlib_Option.map(v["bs"], json => Stdlib_Result.map(Spice.arrayFromJson(Spice.intFromJson, json), v => v)), {
+    let bs = Stdlib_Option.getOr(Stdlib_Option.map(v["bs"], extra => Spice.optionalFieldFromJson(extra => Spice.arrayFromJson(Spice.intFromJson, extra), extra)), {
       TAG: "Ok",
       _0: undefined
     });
@@ -196,7 +195,7 @@ function t2_decode(v) {
   }
   let a = Stdlib_Option.getOr(Stdlib_Option.map(v["a"], Spice.intFromJson), Spice.error(undefined, "a" + " missing", v));
   if (a.TAG === "Ok") {
-    let bs = Stdlib_Option.getOr(Stdlib_Option.map(v["bs"], json => Stdlib_Result.map(Spice.arrayFromJson(b_decode, json), v => v)), {
+    let bs = Stdlib_Option.getOr(Stdlib_Option.map(v["bs"], extra => Spice.optionalFieldFromJson(extra => Spice.arrayFromJson(b_decode, extra), extra)), {
       TAG: "Ok",
       _0: undefined
     });

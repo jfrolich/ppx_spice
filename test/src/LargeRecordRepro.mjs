@@ -2,7 +2,6 @@
 
 import * as Spice from "./Spice.mjs";
 import * as Stdlib_Option from "@rescript/runtime/lib/es6/Stdlib_Option.js";
-import * as Stdlib_Result from "@rescript/runtime/lib/es6/Stdlib_Result.js";
 
 function t_encode(v) {
   let extra = v.f1;
@@ -278,132 +277,132 @@ function t_decode(v) {
   if (typeof v !== "object" || v === null || Array.isArray(v)) {
     return Spice.error(undefined, "Not an object", v);
   }
-  let f1 = Stdlib_Option.getOr(Stdlib_Option.map(v["f1"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+  let f1 = Stdlib_Option.getOr(Stdlib_Option.map(v["f1"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
     TAG: "Ok",
     _0: undefined
   });
   if (f1.TAG === "Ok") {
-    let f2 = Stdlib_Option.getOr(Stdlib_Option.map(v["f2"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+    let f2 = Stdlib_Option.getOr(Stdlib_Option.map(v["f2"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
       TAG: "Ok",
       _0: undefined
     });
     if (f2.TAG === "Ok") {
-      let f3 = Stdlib_Option.getOr(Stdlib_Option.map(v["f3"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+      let f3 = Stdlib_Option.getOr(Stdlib_Option.map(v["f3"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
         TAG: "Ok",
         _0: undefined
       });
       if (f3.TAG === "Ok") {
-        let f4 = Stdlib_Option.getOr(Stdlib_Option.map(v["f4"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+        let f4 = Stdlib_Option.getOr(Stdlib_Option.map(v["f4"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
           TAG: "Ok",
           _0: undefined
         });
         if (f4.TAG === "Ok") {
-          let f5 = Stdlib_Option.getOr(Stdlib_Option.map(v["f5"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+          let f5 = Stdlib_Option.getOr(Stdlib_Option.map(v["f5"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
             TAG: "Ok",
             _0: undefined
           });
           if (f5.TAG === "Ok") {
-            let f6 = Stdlib_Option.getOr(Stdlib_Option.map(v["f6"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+            let f6 = Stdlib_Option.getOr(Stdlib_Option.map(v["f6"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
               TAG: "Ok",
               _0: undefined
             });
             if (f6.TAG === "Ok") {
-              let f7 = Stdlib_Option.getOr(Stdlib_Option.map(v["f7"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+              let f7 = Stdlib_Option.getOr(Stdlib_Option.map(v["f7"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                 TAG: "Ok",
                 _0: undefined
               });
               if (f7.TAG === "Ok") {
-                let f8 = Stdlib_Option.getOr(Stdlib_Option.map(v["f8"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+                let f8 = Stdlib_Option.getOr(Stdlib_Option.map(v["f8"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                   TAG: "Ok",
                   _0: undefined
                 });
                 if (f8.TAG === "Ok") {
-                  let f9 = Stdlib_Option.getOr(Stdlib_Option.map(v["f9"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+                  let f9 = Stdlib_Option.getOr(Stdlib_Option.map(v["f9"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                     TAG: "Ok",
                     _0: undefined
                   });
                   if (f9.TAG === "Ok") {
-                    let f10 = Stdlib_Option.getOr(Stdlib_Option.map(v["f10"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+                    let f10 = Stdlib_Option.getOr(Stdlib_Option.map(v["f10"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                       TAG: "Ok",
                       _0: undefined
                     });
                     if (f10.TAG === "Ok") {
-                      let f11 = Stdlib_Option.getOr(Stdlib_Option.map(v["f11"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+                      let f11 = Stdlib_Option.getOr(Stdlib_Option.map(v["f11"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                         TAG: "Ok",
                         _0: undefined
                       });
                       if (f11.TAG === "Ok") {
-                        let f12 = Stdlib_Option.getOr(Stdlib_Option.map(v["f12"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+                        let f12 = Stdlib_Option.getOr(Stdlib_Option.map(v["f12"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                           TAG: "Ok",
                           _0: undefined
                         });
                         if (f12.TAG === "Ok") {
-                          let f13 = Stdlib_Option.getOr(Stdlib_Option.map(v["f13"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+                          let f13 = Stdlib_Option.getOr(Stdlib_Option.map(v["f13"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                             TAG: "Ok",
                             _0: undefined
                           });
                           if (f13.TAG === "Ok") {
-                            let f14 = Stdlib_Option.getOr(Stdlib_Option.map(v["f14"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+                            let f14 = Stdlib_Option.getOr(Stdlib_Option.map(v["f14"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                               TAG: "Ok",
                               _0: undefined
                             });
                             if (f14.TAG === "Ok") {
-                              let f15 = Stdlib_Option.getOr(Stdlib_Option.map(v["f15"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+                              let f15 = Stdlib_Option.getOr(Stdlib_Option.map(v["f15"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                                 TAG: "Ok",
                                 _0: undefined
                               });
                               if (f15.TAG === "Ok") {
-                                let f16 = Stdlib_Option.getOr(Stdlib_Option.map(v["f16"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+                                let f16 = Stdlib_Option.getOr(Stdlib_Option.map(v["f16"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                                   TAG: "Ok",
                                   _0: undefined
                                 });
                                 if (f16.TAG === "Ok") {
-                                  let f17 = Stdlib_Option.getOr(Stdlib_Option.map(v["f17"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+                                  let f17 = Stdlib_Option.getOr(Stdlib_Option.map(v["f17"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                                     TAG: "Ok",
                                     _0: undefined
                                   });
                                   if (f17.TAG === "Ok") {
-                                    let f18 = Stdlib_Option.getOr(Stdlib_Option.map(v["f18"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+                                    let f18 = Stdlib_Option.getOr(Stdlib_Option.map(v["f18"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                                       TAG: "Ok",
                                       _0: undefined
                                     });
                                     if (f18.TAG === "Ok") {
-                                      let f19 = Stdlib_Option.getOr(Stdlib_Option.map(v["f19"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+                                      let f19 = Stdlib_Option.getOr(Stdlib_Option.map(v["f19"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                                         TAG: "Ok",
                                         _0: undefined
                                       });
                                       if (f19.TAG === "Ok") {
-                                        let f20 = Stdlib_Option.getOr(Stdlib_Option.map(v["f20"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+                                        let f20 = Stdlib_Option.getOr(Stdlib_Option.map(v["f20"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                                           TAG: "Ok",
                                           _0: undefined
                                         });
                                         if (f20.TAG === "Ok") {
-                                          let f21 = Stdlib_Option.getOr(Stdlib_Option.map(v["f21"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+                                          let f21 = Stdlib_Option.getOr(Stdlib_Option.map(v["f21"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                                             TAG: "Ok",
                                             _0: undefined
                                           });
                                           if (f21.TAG === "Ok") {
-                                            let f22 = Stdlib_Option.getOr(Stdlib_Option.map(v["f22"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+                                            let f22 = Stdlib_Option.getOr(Stdlib_Option.map(v["f22"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                                               TAG: "Ok",
                                               _0: undefined
                                             });
                                             if (f22.TAG === "Ok") {
-                                              let f23 = Stdlib_Option.getOr(Stdlib_Option.map(v["f23"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+                                              let f23 = Stdlib_Option.getOr(Stdlib_Option.map(v["f23"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                                                 TAG: "Ok",
                                                 _0: undefined
                                               });
                                               if (f23.TAG === "Ok") {
-                                                let f24 = Stdlib_Option.getOr(Stdlib_Option.map(v["f24"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+                                                let f24 = Stdlib_Option.getOr(Stdlib_Option.map(v["f24"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                                                   TAG: "Ok",
                                                   _0: undefined
                                                 });
                                                 if (f24.TAG === "Ok") {
-                                                  let f25 = Stdlib_Option.getOr(Stdlib_Option.map(v["f25"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+                                                  let f25 = Stdlib_Option.getOr(Stdlib_Option.map(v["f25"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                                                     TAG: "Ok",
                                                     _0: undefined
                                                   });
                                                   if (f25.TAG === "Ok") {
-                                                    let f26 = Stdlib_Option.getOr(Stdlib_Option.map(v["f26"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+                                                    let f26 = Stdlib_Option.getOr(Stdlib_Option.map(v["f26"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                                                       TAG: "Ok",
                                                       _0: undefined
                                                     });

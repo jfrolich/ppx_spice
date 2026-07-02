@@ -107,15 +107,12 @@ Zora.test("record with optional field", t => {
   };
   let sampleJson4 = sample4;
   let decodedNull = Records.tOp_decode(sampleJson4);
-  t.test("decode null option field returns error", async t => {
+  t.test("decode null option field returns None", async t => {
     if (decodedNull.TAG === "Ok") {
-      t.fail("expected decode to fail");
+      t.equal(decodedNull._0.label, undefined, "label");
       return;
     }
-    let match = decodedNull._0;
-    t.equal(match.path, ".label", "path");
-    t.equal(match.message, "Not a string", "message");
-    t.equal(match.value, null, "value");
+    t.fail("expected decode to succeed");
   });
   let sample5 = {
     label: "sample",
@@ -123,15 +120,14 @@ Zora.test("record with optional field", t => {
   };
   let sampleJson5 = sample5;
   let decodedNullOptional = Records.tOp_decode(sampleJson5);
-  t.test("decode null optional field returns error", async t => {
+  t.test("decode null optional field returns None", async t => {
     if (decodedNullOptional.TAG === "Ok") {
-      t.fail("expected decode to fail");
+      let record = decodedNullOptional._0;
+      t.equal(record.label, "sample", "label");
+      t.equal(record.value, undefined, "value");
       return;
     }
-    let match = decodedNullOptional._0;
-    t.equal(match.path, ".value", "path");
-    t.equal(match.message, "Not a number", "message");
-    t.equal(match.value, null, "value");
+    t.fail("expected decode to succeed");
   });
 });
 

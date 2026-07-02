@@ -141,6 +141,20 @@ let optionalNullFromJson = (decoder, json) =>
   | _ => Result.map(decoder(json), v => Some(Null.Value(v)))
   }
 
+// For option/optional record fields. A JSON null defers to the inner decoder
+// (so Null.t and nested option fields keep it), but decodes to None instead
+// of erroring when the inner type cannot represent null. The fallback
+// diverges from upstream, which fails the decode.
+let optionalFieldFromJson = (decoder, json) =>
+  switch (json: JSON.t) {
+  | JSON.Null =>
+    switch decoder(json) {
+    | Ok(v) => Ok(Some(v))
+    | Error(_) => Ok(None)
+    }
+  | _ => Result.map(decoder(json), v => Some(v))
+  }
+
 let resultToJson = (okEncoder, errorEncoder, result): JSON.t => JSON.Array(
   switch result {
   | Ok(v) => [JSON.String("Ok"), okEncoder(v)]

@@ -117,14 +117,10 @@ zoraBlock("record with optional field", t => {
   }
   let sampleJson4 = sample4->JSON.Object
   let decodedNull = sampleJson4->Records.tOp_decode
-  t->test("decode null option field returns error", async t => {
+  t->test("decode null option field returns None", async t => {
     switch decodedNull {
-    | Error({path, message, value}) => {
-        t->equal(path, ".label", "path")
-        t->equal(message, "Not a string", "message")
-        t->equal(value, JSON.Null, "value")
-      }
-    | Ok(_) => t->fail("expected decode to fail")
+    | Ok(record) => t->equal(record.label, None, "label")
+    | Error(_) => t->fail("expected decode to succeed")
     }
   })
 
@@ -134,14 +130,13 @@ zoraBlock("record with optional field", t => {
   }
   let sampleJson5 = sample5->JSON.Object
   let decodedNullOptional = sampleJson5->Records.tOp_decode
-  t->test("decode null optional field returns error", async t => {
+  t->test("decode null optional field returns None", async t => {
     switch decodedNullOptional {
-    | Error({path, message, value}) => {
-        t->equal(path, ".value", "path")
-        t->equal(message, "Not a number", "message")
-        t->equal(value, JSON.Null, "value")
+    | Ok(record) => {
+        t->equal(record.label, Some("sample"), "label")
+        t->equal(record.value, None, "value")
       }
-    | Ok(_) => t->fail("expected decode to fail")
+    | Error(_) => t->fail("expected decode to succeed")
     }
   })
 
