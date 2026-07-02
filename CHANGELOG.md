@@ -1,9 +1,30 @@
 # CHANGELOG
 
-## 0.3.3(unreleased)
+## 0.5.0 (unreleased)
 
-- fix: include nested error path in record field decode errors https://github.com/mununki/ppx_spice/pull/118
-- Support `result`, `dict` types https://github.com/mununki/ppx_spice/pull/119
+Synced with upstream mununki/ppx_spice main (everything through the unreleased inline-record support):
+
+- Support inline records in variant constructors https://github.com/mununki/ppx_spice/pull/125
+- Fix parameterized type codec arity https://github.com/mununki/ppx_spice/pull/123
+- Fix option encoding across top-level and nested JSON contexts https://github.com/mununki/ppx_spice/pull/122
+  - BREAKING: a JSON `null` value for an `option`/optional record field is now a decode error instead of `None`; use `Null.t` / `Nullable.t` for fields that can be `null`.
+  - The optional `Null.t` null-decoding fix from 0.3.5 is preserved (upstream now has an equivalent test).
+- Support `result`, `dict` type literals https://github.com/mununki/ppx_spice/pull/119
+- Include nested error path in record field decode errors https://github.com/mununki/ppx_spice/pull/118
+
+## 0.3.7
+
+- Add linux-arm64 prebuilt ppx binary
+
+## 0.3.5 / 0.3.6
+
+- Fix decoding of optional `Null.t` fields when the JSON value is null
+- Fix macOS binary names and execute permissions in the publish workflow
+
+## 0.3.4
+
+- Rename ReScript package from `@greenlabs` to `@jfrolich`
+- Prioritize `@spice.default` over `is_option` in pattern matching
 
 ## 0.3.2
 
