@@ -232,6 +232,14 @@ function optionToJson(encoder, opt) {
   }
 }
 
+function optionToNullableJson(encoder, opt) {
+  if (opt !== undefined) {
+    return encoder(Primitive_option.valFromOption(opt));
+  } else {
+    return null;
+  }
+}
+
 function optionFromJson(decoder, json) {
   if (json === null) {
     return {
@@ -252,6 +260,17 @@ function nullToJson(encoder, opt) {
 }
 
 function nullFromJson(decoder, json) {
+  if (json === null) {
+    return {
+      TAG: "Ok",
+      _0: null
+    };
+  } else {
+    return Stdlib_Result.map(decoder(json), v => (v));
+  }
+}
+
+function optionalNullFromJson(decoder, json) {
   if (json === null) {
     return {
       TAG: "Ok",
@@ -315,6 +334,13 @@ function resultFromJson(okDecoder, errorDecoder, json) {
 
 function dictToJson(encoder, dict) {
   return Stdlib_Dict.mapValues(dict, encoder);
+}
+
+function dictOptionalToJson(encoder, dict) {
+  return Object.fromEntries(filterOptional(Object.entries(dict).map(param => [
+    param[0],
+    encoder(param[1])
+  ])));
 }
 
 function dictFromJson(decoder, json) {
@@ -394,7 +420,7 @@ let list = [
 ];
 
 let option = [
-  optionToJson,
+  optionToNullableJson,
   optionFromJson
 ];
 
@@ -440,12 +466,15 @@ export {
   listFromJson,
   filterOptional,
   optionToJson,
+  optionToNullableJson,
   optionFromJson,
   nullToJson,
   nullFromJson,
+  optionalNullFromJson,
   resultToJson,
   resultFromJson,
   dictToJson,
+  dictOptionalToJson,
   dictFromJson,
   Codecs,
 }

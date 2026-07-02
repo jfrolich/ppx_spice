@@ -7,11 +7,19 @@ function stringArray_encode(v) {
   return Spice.arrayToJson(Spice.stringToJson, v);
 }
 
+function stringArray_encodeJson(v) {
+  return Spice.arrayToJson(Spice.stringToJson, v);
+}
+
 function stringArray_decode(v) {
   return Spice.arrayFromJson(Spice.stringFromJson, v);
 }
 
 function intArray_encode(v) {
+  return Spice.arrayToJson(Spice.intToJson, v);
+}
+
+function intArray_encodeJson(v) {
   return Spice.arrayToJson(Spice.intToJson, v);
 }
 
@@ -23,11 +31,19 @@ function floatArray_encode(v) {
   return Spice.arrayToJson(Spice.floatToJson, v);
 }
 
+function floatArray_encodeJson(v) {
+  return Spice.arrayToJson(Spice.floatToJson, v);
+}
+
 function floatArray_decode(v) {
   return Spice.arrayFromJson(Spice.floatFromJson, v);
 }
 
 function boolArray_encode(v) {
+  return Spice.arrayToJson(Spice.boolToJson, v);
+}
+
+function boolArray_encodeJson(v) {
   return Spice.arrayToJson(Spice.boolToJson, v);
 }
 
@@ -48,31 +64,48 @@ function recordItem_encode(v) {
   ]));
 }
 
+function recordItem_encodeJson(v) {
+  return Object.fromEntries(Spice.filterOptional([
+    [
+      "id",
+      Spice.intToJson(v.id)
+    ],
+    [
+      "name",
+      Spice.stringToJson(v.name)
+    ]
+  ]));
+}
+
 function recordItem_decode(v) {
   if (typeof v !== "object" || v === null || Array.isArray(v)) {
     return Spice.error(undefined, "Not an object", v);
   }
-  let id_result = Stdlib_Option.getOr(Stdlib_Option.map(v["id"], Spice.intFromJson), Spice.error(undefined, "id" + " missing", v));
-  let name_result = Stdlib_Option.getOr(Stdlib_Option.map(v["name"], Spice.stringFromJson), Spice.error(undefined, "name" + " missing", v));
-  if (id_result.TAG === "Ok") {
-    if (name_result.TAG === "Ok") {
+  let id = Stdlib_Option.getOr(Stdlib_Option.map(v["id"], Spice.intFromJson), Spice.error(undefined, "id" + " missing", v));
+  if (id.TAG === "Ok") {
+    let name = Stdlib_Option.getOr(Stdlib_Option.map(v["name"], Spice.stringFromJson), Spice.error(undefined, "name" + " missing", v));
+    if (name.TAG === "Ok") {
       return {
         TAG: "Ok",
         _0: {
-          id: id_result._0,
-          name: name_result._0
+          id: id._0,
+          name: name._0
         }
       };
     }
-    let e = name_result._0;
-    return Spice.error("name", e.message, e.value);
+    let e = name._0;
+    return Spice.error("." + ("name" + e.path), e.message, e.value);
   }
-  let e$1 = id_result._0;
-  return Spice.error("id", e$1.message, e$1.value);
+  let e$1 = id._0;
+  return Spice.error("." + ("id" + e$1.path), e$1.message, e$1.value);
 }
 
 function recordArray_encode(v) {
-  return Spice.arrayToJson(recordItem_encode, v);
+  return Spice.arrayToJson(recordItem_encodeJson, v);
+}
+
+function recordArray_encodeJson(v) {
+  return Spice.arrayToJson(recordItem_encodeJson, v);
 }
 
 function recordArray_decode(v) {
@@ -83,24 +116,35 @@ function nestedArray_encode(v) {
   return Spice.arrayToJson(extra => Spice.arrayToJson(Spice.intToJson, extra), v);
 }
 
+function nestedArray_encodeJson(v) {
+  return Spice.arrayToJson(extra => Spice.arrayToJson(Spice.intToJson, extra), v);
+}
+
 function nestedArray_decode(v) {
   return Spice.arrayFromJson(extra => Spice.arrayFromJson(Spice.intFromJson, extra), v);
 }
 
 export {
   stringArray_encode,
+  stringArray_encodeJson,
   stringArray_decode,
   intArray_encode,
+  intArray_encodeJson,
   intArray_decode,
   floatArray_encode,
+  floatArray_encodeJson,
   floatArray_decode,
   boolArray_encode,
+  boolArray_encodeJson,
   boolArray_decode,
   recordItem_encode,
+  recordItem_encodeJson,
   recordItem_decode,
   recordArray_encode,
+  recordArray_encodeJson,
   recordArray_decode,
   nestedArray_encode,
+  nestedArray_encodeJson,
   nestedArray_decode,
 }
 /* No side effect */

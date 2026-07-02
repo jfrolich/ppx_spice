@@ -2,8 +2,23 @@
 
 import * as Spice from "./Spice.mjs";
 import * as Stdlib_Option from "@rescript/runtime/lib/es6/Stdlib_Option.js";
+import * as Stdlib_Result from "@rescript/runtime/lib/es6/Stdlib_Result.js";
 
 function te_encode(v) {
+  let extra = v.nickname;
+  return Object.fromEntries(Spice.filterOptional([
+    [
+      "name",
+      Spice.stringToJson(v.name)
+    ],
+    [
+      "nickname",
+      Spice.optionToJson(Spice.stringToJson, extra)
+    ]
+  ]));
+}
+
+function te_encodeJson(v) {
   let extra = v.nickname;
   return Object.fromEntries(Spice.filterOptional([
     [
@@ -21,30 +36,31 @@ function td_decode(v) {
   if (typeof v !== "object" || v === null || Array.isArray(v)) {
     return Spice.error(undefined, "Not an object", v);
   }
-  let name_result = Stdlib_Option.getOr(Stdlib_Option.map(v["name"], Spice.stringFromJson), Spice.error(undefined, "name" + " missing", v));
-  let nickname_result = Stdlib_Option.getOr(Stdlib_Option.map(v["nickname"], extra => Spice.optionFromJson(Spice.stringFromJson, extra)), {
-    TAG: "Ok",
-    _0: undefined
-  });
-  if (name_result.TAG === "Ok") {
-    if (nickname_result.TAG === "Ok") {
+  let name = Stdlib_Option.getOr(Stdlib_Option.map(v["name"], Spice.stringFromJson), Spice.error(undefined, "name" + " missing", v));
+  if (name.TAG === "Ok") {
+    let nickname = Stdlib_Option.getOr(Stdlib_Option.map(v["nickname"], json => Stdlib_Result.map(Spice.stringFromJson(json), v => v)), {
+      TAG: "Ok",
+      _0: undefined
+    });
+    if (nickname.TAG === "Ok") {
       return {
         TAG: "Ok",
         _0: {
-          name: name_result._0,
-          nickname: nickname_result._0
+          name: name._0,
+          nickname: nickname._0
         }
       };
     }
-    let e = nickname_result._0;
-    return Spice.error("nickname", e.message, e.value);
+    let e = nickname._0;
+    return Spice.error("." + ("nickname" + e.path), e.message, e.value);
   }
-  let e$1 = name_result._0;
-  return Spice.error("name", e$1.message, e$1.value);
+  let e$1 = name._0;
+  return Spice.error("." + ("name" + e$1.path), e$1.message, e$1.value);
 }
 
 export {
   te_encode,
+  te_encodeJson,
   td_decode,
 }
 /* No side effect */

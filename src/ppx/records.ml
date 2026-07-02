@@ -15,6 +15,26 @@ type parsed_decl = {
   is_option : bool;
 }
 
+let generate_object_encoder_expr decls =
+  let arrExpr =
+    decls
+    |> List.map
+         (fun { key; field; codecs = encoder, _; is_optional; is_option } ->
+           if is_optional || is_option then
+             Exp.tuple
+               [ key; Exp.apply (Option.get encoder) [ (Nolabel, field) ] ]
+           else
+             [%expr
+               [%e key],
+                 (* The Encoder for option `Spice.optionToJson` returns option type.
+                      So, encoder for other types return with Some to match type of encoder. *)
+                 Some ([%e Option.get encoder] [%e field])])
+    |> Exp.array
+  in
+  Exp.constraint_
+    [%expr JSON.Object (Dict.fromArray (Spice.filterOptional [%e arrExpr]))]
+    Utils.ctyp_json_t
+
 let generate_encoder decls unboxed =
   match unboxed with
   | true ->
@@ -22,43 +42,31 @@ let generate_encoder decls unboxed =
       let e, _ = codecs in
       Utils.expr_func ~arity:1 [%expr fun v -> [%e Option.get e] [%e field]]
   | false ->
-      let arrExpr =
-        decls
-        |> List.map
-             (fun { key; field; codecs = encoder, _; is_optional; is_option } ->
-               if is_optional || is_option then
-                 Exp.tuple
-                   [ key; Exp.apply (Option.get encoder) [ (Nolabel, field) ] ]
-               else
-                 [%expr
-                   [%e key],
-                     (* The Encoder for option `Spice.optionToJson` returns option type.
-                          So, encoder for other types return with Some to match type of encoder. *)
-                     Some ([%e Option.get encoder] [%e field])])
-        |> Exp.array
-      in
-      Exp.constraint_
-        [%expr JSON.Object (Dict.fromArray (Spice.filterOptional [%e arrExpr]))]
-        Utils.ctyp_json_t
+      generate_object_encoder_expr decls
       |> Exp.fun_ Asttypes.Nolabel None [%pat? v]
       |> Utils.expr_func ~arity:1
 
+let generate_record_expr decls =
+  let record_fields =
+    List.map
+      (fun d ->
+        let { name; is_optional } = d in
+        let attrs = if is_optional then [ Utils.attr_optional ] else [] in
+        (lid name, make_ident_expr ~attrs name))
+      decls
+  in
+  Exp.record record_fields None
+
 (* O(n) nested match decoder - replaces O(n²) tuple pattern matching *)
-let generate_nested_decoder decls =
+let generate_nested_decoder ?ok_expr decls =
   let loc = !default_loc in
   let dict_expr = Exp.ident (mknoloc (Longident.Lident "dict")) in
 
   (* Build the final Ok expression with the record *)
   let ok_expr =
-    let record_fields =
-      List.map
-        (fun d ->
-          let { name; is_optional } = d in
-          let attrs = if is_optional then [ Utils.attr_optional ] else [] in
-          (lid name, make_ident_expr ~attrs name))
-        decls
-    in
-    [%expr Ok [%e Exp.record record_fields None]]
+    match ok_expr with
+    | Some ok_expr -> ok_expr
+    | None -> [%expr Ok [%e generate_record_expr decls]]
   in
 
   (* Generate decode expression for a single field *)
@@ -102,7 +110,7 @@ let generate_nested_decoder decls =
                        (Typ.constr
                           (mknoloc (Longident.parse "Spice.decodeError"))
                           []))))
-              [%expr Spice.error ~path:[%e key] e.message e.value]
+              [%expr Spice.error ~path:("." ^ [%e key] ^ e.path) e.message e.value]
           in
           let match_expr = Exp.match_ decode_expr [ ok_case; error_case ] in
           loop match_expr rest
@@ -134,7 +142,28 @@ let generate_decoder decls unboxed =
             | JSON.Object dict -> [%e generate_nested_switches decls]
             | _ -> Spice.error "Not an object" v]
 
-let parse_decl generator_settings
+let wrap_decoder_with_some decode =
+  let wrap_some = Utils.expr_func ~arity:1 [%expr fun v -> Some(v)] in
+  Utils.expr_func ~arity:1
+    [%expr fun json -> Result.map ([%e decode] json) [%e wrap_some]]
+
+let make_omittable_codecs codecs =
+  let add_attrs attrs e = { e with pexp_attributes = attrs } in
+  match codecs with
+  | Some encode, Some decode ->
+      ( Some
+          (add_attrs [ Utils.attr_partial ]
+             [%expr Spice.optionToJson [%e encode]]),
+        Some (wrap_decoder_with_some decode) )
+  | Some encode, None ->
+      ( Some
+          (add_attrs [ Utils.attr_partial ]
+             [%expr Spice.optionToJson [%e encode]]),
+        None )
+  | None, Some decode -> (None, Some (wrap_decoder_with_some decode))
+  | None, None -> codecs
+
+let parse_decl ?field generator_settings
     { pld_name = { txt }; pld_loc; pld_type; pld_attributes } =
   let default =
     match get_attribute_by_name pld_attributes "spice.default" with
@@ -155,70 +184,46 @@ let parse_decl generator_settings
     |> List.exists (function Ok (Some _) -> true | _ -> false)
   in
   let is_option = Utils.check_option_type pld_type in
-  let is_null = Utils.check_null_type pld_type in
-  let codecs = Codecs.generate_codecs generator_settings pld_type in
-  let add_attrs attrs e = { e with pexp_attributes = attrs } in
+  let codecs = Codecs.generate_value_codecs generator_settings pld_type in
   let codecs =
     if is_optional then
-      (* Special case for optional Null.t fields: use optionalNullFromJson
-         to correctly distinguish between absent field (None) and
-         present field with null value (Some(Null.Null)) *)
-      if is_null then
-        match Utils.get_null_inner_type pld_type with
-        | Some inner_type ->
-            let inner_codecs = Codecs.generate_codecs generator_settings inner_type in
-            (match codecs, inner_codecs with
-            | (Some encode, _), (_, Some inner_decode) ->
-                ( Some
-                    (add_attrs [ Utils.attr_partial ]
-                       [%expr Spice.optionToJson [%e encode]]),
-                  Some
-                    (add_attrs [ Utils.attr_partial ]
-                       [%expr Spice.optionalNullFromJson [%e inner_decode]]) )
-            | (Some encode, _), (_, None) ->
-                ( Some
-                    (add_attrs [ Utils.attr_partial ]
-                       [%expr Spice.optionToJson [%e encode]]),
-                  None )
-            | (None, _), (_, Some inner_decode) ->
-                ( None,
-                  Some
-                    (add_attrs [ Utils.attr_partial ]
-                       [%expr Spice.optionalNullFromJson [%e inner_decode]]) )
-            | (None, _), (_, None) -> codecs)
-        | None -> codecs
-      else
-        match codecs with
-        | Some encode, Some decode ->
-            ( Some
-                (add_attrs [ Utils.attr_partial ]
-                   [%expr Spice.optionToJson [%e encode]]),
-              Some
-                (add_attrs [ Utils.attr_partial ]
-                   [%expr Spice.optionFromJson [%e decode]]) )
-        | Some encode, _ ->
-            ( Some
-                (add_attrs [ Utils.attr_partial ]
-                   [%expr Spice.optionToJson [%e encode]]),
-              None )
-        | _, Some decode ->
-            ( None,
-              Some
-                (add_attrs [ Utils.attr_partial ]
-                   [%expr Spice.optionFromJson [%e decode]]) )
-        | None, None -> codecs
+      make_omittable_codecs codecs
+    else if is_option then
+      match pld_type.ptyp_desc with
+      | Ptyp_constr ({ txt = Lident "option" }, [ inner_type ]) ->
+          make_omittable_codecs
+            (Codecs.generate_value_codecs generator_settings inner_type)
+      | _ -> codecs
     else codecs
   in
 
   {
     name = txt;
     key;
-    field = Exp.field [%expr v] (lid txt);
+    field =
+      (match field with
+      | Some field -> field txt
+      | None -> Exp.field [%expr v] (lid txt));
     codecs;
     default;
     is_optional;
     is_option;
   }
+
+let parse_inline_decl generator_settings decl =
+  parse_decl ~field:(fun name -> make_ident_expr name) generator_settings decl
+
+let generate_inline_record_encoder_expr generator_settings decls =
+  decls
+  |> List.map (parse_inline_decl generator_settings)
+  |> generate_object_encoder_expr
+
+let generate_inline_record_decoder_expr generator_settings decls constructor_name =
+  let parsed_decls = List.map (parse_inline_decl generator_settings) decls in
+  let constructor =
+    Exp.construct (lid constructor_name) (Some (generate_record_expr parsed_decls))
+  in
+  generate_nested_decoder ~ok_expr:[%expr Ok [%e constructor]] parsed_decls
 
 let generate_codecs ({ do_encode; do_decode } as generator_settings) decls
     unboxed =

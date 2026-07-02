@@ -1,0 +1,25 @@
+{
+  "name": "invalid-as-payload",
+  "sources": [
+    {
+      "dir": "src",
+      "subdirs": true
+    }
+  ],
+  "package-specs": [
+    {
+      "module": "esmodule",
+      "in-source": true
+    }
+  ],
+  "suffix": ".mjs",
+  "ppx-flags": [
+    "@jfrolich/ppx-spice/ppx"
+  ],
+  "dependencies": [
+    "@jfrolich/ppx-spice"
+  ],
+  "warnings": {
+    "error": true
+  }
+}

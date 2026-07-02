@@ -1,6 +1,11 @@
 include Arrays_test
 include Encode_decode_test
+include Generic_type_params_test
 include Optional_field_records_test
 include Polyvariants_test
 include Records_test
+include Top_level_options_test
+include Tuples_test
 include Variants_test
+include Dicts_test
+include Results_test

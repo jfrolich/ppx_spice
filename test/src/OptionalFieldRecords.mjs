@@ -2,8 +2,23 @@
 
 import * as Spice from "./Spice.mjs";
 import * as Stdlib_Option from "@rescript/runtime/lib/es6/Stdlib_Option.js";
+import * as Stdlib_Result from "@rescript/runtime/lib/es6/Stdlib_Result.js";
 
 function t0_encode(v) {
+  let extra = v.b;
+  return Object.fromEntries(Spice.filterOptional([
+    [
+      "a",
+      Spice.intToJson(v.a)
+    ],
+    [
+      "b",
+      Spice.optionToJson(Spice.intToJson, extra)
+    ]
+  ]));
+}
+
+function t0_encodeJson(v) {
   let extra = v.b;
   return Object.fromEntries(Spice.filterOptional([
     [
@@ -21,29 +36,43 @@ function t0_decode(v) {
   if (typeof v !== "object" || v === null || Array.isArray(v)) {
     return Spice.error(undefined, "Not an object", v);
   }
-  let a_result = Stdlib_Option.getOr(Stdlib_Option.map(v["a"], Spice.intFromJson), Spice.error(undefined, "a" + " missing", v));
-  let b_result = Stdlib_Option.getOr(Stdlib_Option.map(v["b"], extra => Spice.optionFromJson(Spice.intFromJson, extra)), {
-    TAG: "Ok",
-    _0: undefined
-  });
-  if (a_result.TAG === "Ok") {
-    if (b_result.TAG === "Ok") {
+  let a = Stdlib_Option.getOr(Stdlib_Option.map(v["a"], Spice.intFromJson), Spice.error(undefined, "a" + " missing", v));
+  if (a.TAG === "Ok") {
+    let b = Stdlib_Option.getOr(Stdlib_Option.map(v["b"], json => Stdlib_Result.map(Spice.intFromJson(json), v => v)), {
+      TAG: "Ok",
+      _0: undefined
+    });
+    if (b.TAG === "Ok") {
       return {
         TAG: "Ok",
         _0: {
-          a: a_result._0,
-          b: b_result._0
+          a: a._0,
+          b: b._0
         }
       };
     }
-    let e = b_result._0;
-    return Spice.error("b", e.message, e.value);
+    let e = b._0;
+    return Spice.error("." + ("b" + e.path), e.message, e.value);
   }
-  let e$1 = a_result._0;
-  return Spice.error("a", e$1.message, e$1.value);
+  let e$1 = a._0;
+  return Spice.error("." + ("a" + e$1.path), e$1.message, e$1.value);
 }
 
 function t1_encode(v) {
+  let extra = v.bs;
+  return Object.fromEntries(Spice.filterOptional([
+    [
+      "a",
+      Spice.intToJson(v.a)
+    ],
+    [
+      "bs",
+      Spice.optionToJson(extra => Spice.arrayToJson(Spice.intToJson, extra), extra)
+    ]
+  ]));
+}
+
+function t1_encodeJson(v) {
   let extra = v.bs;
   return Object.fromEntries(Spice.filterOptional([
     [
@@ -61,29 +90,40 @@ function t1_decode(v) {
   if (typeof v !== "object" || v === null || Array.isArray(v)) {
     return Spice.error(undefined, "Not an object", v);
   }
-  let a_result = Stdlib_Option.getOr(Stdlib_Option.map(v["a"], Spice.intFromJson), Spice.error(undefined, "a" + " missing", v));
-  let bs_result = Stdlib_Option.getOr(Stdlib_Option.map(v["bs"], extra => Spice.optionFromJson(extra => Spice.arrayFromJson(Spice.intFromJson, extra), extra)), {
-    TAG: "Ok",
-    _0: undefined
-  });
-  if (a_result.TAG === "Ok") {
-    if (bs_result.TAG === "Ok") {
+  let a = Stdlib_Option.getOr(Stdlib_Option.map(v["a"], Spice.intFromJson), Spice.error(undefined, "a" + " missing", v));
+  if (a.TAG === "Ok") {
+    let bs = Stdlib_Option.getOr(Stdlib_Option.map(v["bs"], json => Stdlib_Result.map(Spice.arrayFromJson(Spice.intFromJson, json), v => v)), {
+      TAG: "Ok",
+      _0: undefined
+    });
+    if (bs.TAG === "Ok") {
       return {
         TAG: "Ok",
         _0: {
-          a: a_result._0,
-          bs: bs_result._0
+          a: a._0,
+          bs: bs._0
         }
       };
     }
-    let e = bs_result._0;
-    return Spice.error("bs", e.message, e.value);
+    let e = bs._0;
+    return Spice.error("." + ("bs" + e.path), e.message, e.value);
   }
-  let e$1 = a_result._0;
-  return Spice.error("a", e$1.message, e$1.value);
+  let e$1 = a._0;
+  return Spice.error("." + ("a" + e$1.path), e$1.message, e$1.value);
 }
 
 function b_encode(v) {
+  switch (v) {
+    case "B0" :
+      return "B0";
+    case "B1" :
+      return "B1";
+    case "B2" :
+      return "B2";
+  }
+}
+
+function b_encodeJson(v) {
   switch (v) {
     case "B0" :
       return "B0";
@@ -131,7 +171,21 @@ function t2_encode(v) {
     ],
     [
       "bs",
-      Spice.optionToJson(extra => Spice.arrayToJson(b_encode, extra), extra)
+      Spice.optionToJson(extra => Spice.arrayToJson(b_encodeJson, extra), extra)
+    ]
+  ]));
+}
+
+function t2_encodeJson(v) {
+  let extra = v.bs;
+  return Object.fromEntries(Spice.filterOptional([
+    [
+      "a",
+      Spice.intToJson(v.a)
+    ],
+    [
+      "bs",
+      Spice.optionToJson(extra => Spice.arrayToJson(b_encodeJson, extra), extra)
     ]
   ]));
 }
@@ -140,36 +194,40 @@ function t2_decode(v) {
   if (typeof v !== "object" || v === null || Array.isArray(v)) {
     return Spice.error(undefined, "Not an object", v);
   }
-  let a_result = Stdlib_Option.getOr(Stdlib_Option.map(v["a"], Spice.intFromJson), Spice.error(undefined, "a" + " missing", v));
-  let bs_result = Stdlib_Option.getOr(Stdlib_Option.map(v["bs"], extra => Spice.optionFromJson(extra => Spice.arrayFromJson(b_decode, extra), extra)), {
-    TAG: "Ok",
-    _0: undefined
-  });
-  if (a_result.TAG === "Ok") {
-    if (bs_result.TAG === "Ok") {
+  let a = Stdlib_Option.getOr(Stdlib_Option.map(v["a"], Spice.intFromJson), Spice.error(undefined, "a" + " missing", v));
+  if (a.TAG === "Ok") {
+    let bs = Stdlib_Option.getOr(Stdlib_Option.map(v["bs"], json => Stdlib_Result.map(Spice.arrayFromJson(b_decode, json), v => v)), {
+      TAG: "Ok",
+      _0: undefined
+    });
+    if (bs.TAG === "Ok") {
       return {
         TAG: "Ok",
         _0: {
-          a: a_result._0,
-          bs: bs_result._0
+          a: a._0,
+          bs: bs._0
         }
       };
     }
-    let e = bs_result._0;
-    return Spice.error("bs", e.message, e.value);
+    let e = bs._0;
+    return Spice.error("." + ("bs" + e.path), e.message, e.value);
   }
-  let e$1 = a_result._0;
-  return Spice.error("a", e$1.message, e$1.value);
+  let e$1 = a._0;
+  return Spice.error("." + ("a" + e$1.path), e$1.message, e$1.value);
 }
 
 export {
   t0_encode,
+  t0_encodeJson,
   t0_decode,
   t1_encode,
+  t1_encodeJson,
   t1_decode,
   b_encode,
+  b_encodeJson,
   b_decode,
   t2_encode,
+  t2_encodeJson,
   t2_decode,
 }
 /* No side effect */

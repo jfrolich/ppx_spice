@@ -2,8 +2,89 @@
 
 import * as Spice from "./Spice.mjs";
 import * as Stdlib_Option from "@rescript/runtime/lib/es6/Stdlib_Option.js";
+import * as Stdlib_Result from "@rescript/runtime/lib/es6/Stdlib_Result.js";
 
 function params_encode(v) {
+  let extra = v.width;
+  let extra$1 = v.height;
+  let extra$2 = v.animation;
+  let extra$3 = v.focusInput;
+  let extra$4 = v.autoMapping;
+  let extra$5 = v.shorthand;
+  let extra$6 = v.pleaseReadGuide;
+  let extra$7 = v.pleaseReadGuideTimer;
+  let extra$8 = v.maxSuggestItems;
+  let extra$9 = v.showMoreHName;
+  let extra$10 = v.hideMapBtn;
+  let extra$11 = v.hideEngBtn;
+  let extra$12 = v.alwaysShowEngAddr;
+  let extra$13 = v.useBannerLink;
+  let extra$14 = v.submitMode;
+  return Object.fromEntries(Spice.filterOptional([
+    [
+      "width",
+      Spice.optionToJson(Spice.floatToJson, extra)
+    ],
+    [
+      "height",
+      Spice.optionToJson(Spice.floatToJson, extra$1)
+    ],
+    [
+      "animation",
+      Spice.optionToJson(Spice.boolToJson, extra$2)
+    ],
+    [
+      "focusInput",
+      Spice.optionToJson(Spice.boolToJson, extra$3)
+    ],
+    [
+      "autoMapping",
+      Spice.optionToJson(Spice.boolToJson, extra$4)
+    ],
+    [
+      "shorthand",
+      Spice.optionToJson(Spice.boolToJson, extra$5)
+    ],
+    [
+      "pleaseReadGuide",
+      Spice.optionToJson(Spice.intToJson, extra$6)
+    ],
+    [
+      "pleaseReadGuideTimer",
+      Spice.optionToJson(Spice.floatToJson, extra$7)
+    ],
+    [
+      "maxSuggestItems",
+      Spice.optionToJson(Spice.intToJson, extra$8)
+    ],
+    [
+      "showMoreHName",
+      Spice.optionToJson(Spice.boolToJson, extra$9)
+    ],
+    [
+      "hideMapBtn",
+      Spice.optionToJson(Spice.boolToJson, extra$10)
+    ],
+    [
+      "hideEngBtn",
+      Spice.optionToJson(Spice.boolToJson, extra$11)
+    ],
+    [
+      "alwaysShowEngAddr",
+      Spice.optionToJson(Spice.boolToJson, extra$12)
+    ],
+    [
+      "useBannerLink",
+      Spice.optionToJson(Spice.boolToJson, extra$13)
+    ],
+    [
+      "submitMode",
+      Spice.optionToJson(Spice.boolToJson, extra$14)
+    ]
+  ]));
+}
+
+function params_encodeJson(v) {
   let extra = v.width;
   let extra$1 = v.height;
   let extra$2 = v.animation;
@@ -87,150 +168,151 @@ function params_decode(v) {
   if (typeof v !== "object" || v === null || Array.isArray(v)) {
     return Spice.error(undefined, "Not an object", v);
   }
-  let width_result = Stdlib_Option.getOr(Stdlib_Option.map(v["width"], extra => Spice.optionFromJson(Spice.floatFromJson, extra)), {
+  let width = Stdlib_Option.getOr(Stdlib_Option.map(v["width"], json => Stdlib_Result.map(Spice.floatFromJson(json), v => v)), {
     TAG: "Ok",
     _0: undefined
   });
-  let height_result = Stdlib_Option.getOr(Stdlib_Option.map(v["height"], extra => Spice.optionFromJson(Spice.floatFromJson, extra)), {
-    TAG: "Ok",
-    _0: undefined
-  });
-  let animation_result = Stdlib_Option.getOr(Stdlib_Option.map(v["animation"], extra => Spice.optionFromJson(Spice.boolFromJson, extra)), {
-    TAG: "Ok",
-    _0: undefined
-  });
-  let focusInput_result = Stdlib_Option.getOr(Stdlib_Option.map(v["focusInput"], extra => Spice.optionFromJson(Spice.boolFromJson, extra)), {
-    TAG: "Ok",
-    _0: undefined
-  });
-  let autoMapping_result = Stdlib_Option.getOr(Stdlib_Option.map(v["autoMapping"], extra => Spice.optionFromJson(Spice.boolFromJson, extra)), {
-    TAG: "Ok",
-    _0: undefined
-  });
-  let shorthand_result = Stdlib_Option.getOr(Stdlib_Option.map(v["shorthand"], extra => Spice.optionFromJson(Spice.boolFromJson, extra)), {
-    TAG: "Ok",
-    _0: undefined
-  });
-  let pleaseReadGuide_result = Stdlib_Option.getOr(Stdlib_Option.map(v["pleaseReadGuide"], extra => Spice.optionFromJson(Spice.intFromJson, extra)), {
-    TAG: "Ok",
-    _0: undefined
-  });
-  let pleaseReadGuideTimer_result = Stdlib_Option.getOr(Stdlib_Option.map(v["pleaseReadGuideTimer"], extra => Spice.optionFromJson(Spice.floatFromJson, extra)), {
-    TAG: "Ok",
-    _0: undefined
-  });
-  let maxSuggestItems_result = Stdlib_Option.getOr(Stdlib_Option.map(v["maxSuggestItems"], extra => Spice.optionFromJson(Spice.intFromJson, extra)), {
-    TAG: "Ok",
-    _0: undefined
-  });
-  let showMoreHName_result = Stdlib_Option.getOr(Stdlib_Option.map(v["showMoreHName"], extra => Spice.optionFromJson(Spice.boolFromJson, extra)), {
-    TAG: "Ok",
-    _0: undefined
-  });
-  let hideMapBtn_result = Stdlib_Option.getOr(Stdlib_Option.map(v["hideMapBtn"], extra => Spice.optionFromJson(Spice.boolFromJson, extra)), {
-    TAG: "Ok",
-    _0: undefined
-  });
-  let hideEngBtn_result = Stdlib_Option.getOr(Stdlib_Option.map(v["hideEngBtn"], extra => Spice.optionFromJson(Spice.boolFromJson, extra)), {
-    TAG: "Ok",
-    _0: undefined
-  });
-  let alwaysShowEngAddr_result = Stdlib_Option.getOr(Stdlib_Option.map(v["alwaysShowEngAddr"], extra => Spice.optionFromJson(Spice.boolFromJson, extra)), {
-    TAG: "Ok",
-    _0: undefined
-  });
-  let useBannerLink_result = Stdlib_Option.getOr(Stdlib_Option.map(v["useBannerLink"], extra => Spice.optionFromJson(Spice.boolFromJson, extra)), {
-    TAG: "Ok",
-    _0: undefined
-  });
-  let submitMode_result = Stdlib_Option.getOr(Stdlib_Option.map(v["submitMode"], extra => Spice.optionFromJson(Spice.boolFromJson, extra)), {
-    TAG: "Ok",
-    _0: undefined
-  });
-  if (width_result.TAG === "Ok") {
-    if (height_result.TAG === "Ok") {
-      if (animation_result.TAG === "Ok") {
-        if (focusInput_result.TAG === "Ok") {
-          if (autoMapping_result.TAG === "Ok") {
-            if (shorthand_result.TAG === "Ok") {
-              if (pleaseReadGuide_result.TAG === "Ok") {
-                if (pleaseReadGuideTimer_result.TAG === "Ok") {
-                  if (maxSuggestItems_result.TAG === "Ok") {
-                    if (showMoreHName_result.TAG === "Ok") {
-                      if (hideMapBtn_result.TAG === "Ok") {
-                        if (hideEngBtn_result.TAG === "Ok") {
-                          if (alwaysShowEngAddr_result.TAG === "Ok") {
-                            if (useBannerLink_result.TAG === "Ok") {
-                              if (submitMode_result.TAG === "Ok") {
+  if (width.TAG === "Ok") {
+    let height = Stdlib_Option.getOr(Stdlib_Option.map(v["height"], json => Stdlib_Result.map(Spice.floatFromJson(json), v => v)), {
+      TAG: "Ok",
+      _0: undefined
+    });
+    if (height.TAG === "Ok") {
+      let animation = Stdlib_Option.getOr(Stdlib_Option.map(v["animation"], json => Stdlib_Result.map(Spice.boolFromJson(json), v => v)), {
+        TAG: "Ok",
+        _0: undefined
+      });
+      if (animation.TAG === "Ok") {
+        let focusInput = Stdlib_Option.getOr(Stdlib_Option.map(v["focusInput"], json => Stdlib_Result.map(Spice.boolFromJson(json), v => v)), {
+          TAG: "Ok",
+          _0: undefined
+        });
+        if (focusInput.TAG === "Ok") {
+          let autoMapping = Stdlib_Option.getOr(Stdlib_Option.map(v["autoMapping"], json => Stdlib_Result.map(Spice.boolFromJson(json), v => v)), {
+            TAG: "Ok",
+            _0: undefined
+          });
+          if (autoMapping.TAG === "Ok") {
+            let shorthand = Stdlib_Option.getOr(Stdlib_Option.map(v["shorthand"], json => Stdlib_Result.map(Spice.boolFromJson(json), v => v)), {
+              TAG: "Ok",
+              _0: undefined
+            });
+            if (shorthand.TAG === "Ok") {
+              let pleaseReadGuide = Stdlib_Option.getOr(Stdlib_Option.map(v["pleaseReadGuide"], json => Stdlib_Result.map(Spice.intFromJson(json), v => v)), {
+                TAG: "Ok",
+                _0: undefined
+              });
+              if (pleaseReadGuide.TAG === "Ok") {
+                let pleaseReadGuideTimer = Stdlib_Option.getOr(Stdlib_Option.map(v["pleaseReadGuideTimer"], json => Stdlib_Result.map(Spice.floatFromJson(json), v => v)), {
+                  TAG: "Ok",
+                  _0: undefined
+                });
+                if (pleaseReadGuideTimer.TAG === "Ok") {
+                  let maxSuggestItems = Stdlib_Option.getOr(Stdlib_Option.map(v["maxSuggestItems"], json => Stdlib_Result.map(Spice.intFromJson(json), v => v)), {
+                    TAG: "Ok",
+                    _0: undefined
+                  });
+                  if (maxSuggestItems.TAG === "Ok") {
+                    let showMoreHName = Stdlib_Option.getOr(Stdlib_Option.map(v["showMoreHName"], json => Stdlib_Result.map(Spice.boolFromJson(json), v => v)), {
+                      TAG: "Ok",
+                      _0: undefined
+                    });
+                    if (showMoreHName.TAG === "Ok") {
+                      let hideMapBtn = Stdlib_Option.getOr(Stdlib_Option.map(v["hideMapBtn"], json => Stdlib_Result.map(Spice.boolFromJson(json), v => v)), {
+                        TAG: "Ok",
+                        _0: undefined
+                      });
+                      if (hideMapBtn.TAG === "Ok") {
+                        let hideEngBtn = Stdlib_Option.getOr(Stdlib_Option.map(v["hideEngBtn"], json => Stdlib_Result.map(Spice.boolFromJson(json), v => v)), {
+                          TAG: "Ok",
+                          _0: undefined
+                        });
+                        if (hideEngBtn.TAG === "Ok") {
+                          let alwaysShowEngAddr = Stdlib_Option.getOr(Stdlib_Option.map(v["alwaysShowEngAddr"], json => Stdlib_Result.map(Spice.boolFromJson(json), v => v)), {
+                            TAG: "Ok",
+                            _0: undefined
+                          });
+                          if (alwaysShowEngAddr.TAG === "Ok") {
+                            let useBannerLink = Stdlib_Option.getOr(Stdlib_Option.map(v["useBannerLink"], json => Stdlib_Result.map(Spice.boolFromJson(json), v => v)), {
+                              TAG: "Ok",
+                              _0: undefined
+                            });
+                            if (useBannerLink.TAG === "Ok") {
+                              let submitMode = Stdlib_Option.getOr(Stdlib_Option.map(v["submitMode"], json => Stdlib_Result.map(Spice.boolFromJson(json), v => v)), {
+                                TAG: "Ok",
+                                _0: undefined
+                              });
+                              if (submitMode.TAG === "Ok") {
                                 return {
                                   TAG: "Ok",
                                   _0: {
-                                    width: width_result._0,
-                                    height: height_result._0,
-                                    animation: animation_result._0,
-                                    focusInput: focusInput_result._0,
-                                    autoMapping: autoMapping_result._0,
-                                    shorthand: shorthand_result._0,
-                                    pleaseReadGuide: pleaseReadGuide_result._0,
-                                    pleaseReadGuideTimer: pleaseReadGuideTimer_result._0,
-                                    maxSuggestItems: maxSuggestItems_result._0,
-                                    showMoreHName: showMoreHName_result._0,
-                                    hideMapBtn: hideMapBtn_result._0,
-                                    hideEngBtn: hideEngBtn_result._0,
-                                    alwaysShowEngAddr: alwaysShowEngAddr_result._0,
-                                    useBannerLink: useBannerLink_result._0,
-                                    submitMode: submitMode_result._0
+                                    width: width._0,
+                                    height: height._0,
+                                    animation: animation._0,
+                                    focusInput: focusInput._0,
+                                    autoMapping: autoMapping._0,
+                                    shorthand: shorthand._0,
+                                    pleaseReadGuide: pleaseReadGuide._0,
+                                    pleaseReadGuideTimer: pleaseReadGuideTimer._0,
+                                    maxSuggestItems: maxSuggestItems._0,
+                                    showMoreHName: showMoreHName._0,
+                                    hideMapBtn: hideMapBtn._0,
+                                    hideEngBtn: hideEngBtn._0,
+                                    alwaysShowEngAddr: alwaysShowEngAddr._0,
+                                    useBannerLink: useBannerLink._0,
+                                    submitMode: submitMode._0
                                   }
                                 };
                               }
-                              let e = submitMode_result._0;
-                              return Spice.error("submitMode", e.message, e.value);
+                              let e = submitMode._0;
+                              return Spice.error("." + ("submitMode" + e.path), e.message, e.value);
                             }
-                            let e$1 = useBannerLink_result._0;
-                            return Spice.error("useBannerLink", e$1.message, e$1.value);
+                            let e$1 = useBannerLink._0;
+                            return Spice.error("." + ("useBannerLink" + e$1.path), e$1.message, e$1.value);
                           }
-                          let e$2 = alwaysShowEngAddr_result._0;
-                          return Spice.error("alwaysShowEngAddr", e$2.message, e$2.value);
+                          let e$2 = alwaysShowEngAddr._0;
+                          return Spice.error("." + ("alwaysShowEngAddr" + e$2.path), e$2.message, e$2.value);
                         }
-                        let e$3 = hideEngBtn_result._0;
-                        return Spice.error("hideEngBtn", e$3.message, e$3.value);
+                        let e$3 = hideEngBtn._0;
+                        return Spice.error("." + ("hideEngBtn" + e$3.path), e$3.message, e$3.value);
                       }
-                      let e$4 = hideMapBtn_result._0;
-                      return Spice.error("hideMapBtn", e$4.message, e$4.value);
+                      let e$4 = hideMapBtn._0;
+                      return Spice.error("." + ("hideMapBtn" + e$4.path), e$4.message, e$4.value);
                     }
-                    let e$5 = showMoreHName_result._0;
-                    return Spice.error("showMoreHName", e$5.message, e$5.value);
+                    let e$5 = showMoreHName._0;
+                    return Spice.error("." + ("showMoreHName" + e$5.path), e$5.message, e$5.value);
                   }
-                  let e$6 = maxSuggestItems_result._0;
-                  return Spice.error("maxSuggestItems", e$6.message, e$6.value);
+                  let e$6 = maxSuggestItems._0;
+                  return Spice.error("." + ("maxSuggestItems" + e$6.path), e$6.message, e$6.value);
                 }
-                let e$7 = pleaseReadGuideTimer_result._0;
-                return Spice.error("pleaseReadGuideTimer", e$7.message, e$7.value);
+                let e$7 = pleaseReadGuideTimer._0;
+                return Spice.error("." + ("pleaseReadGuideTimer" + e$7.path), e$7.message, e$7.value);
               }
-              let e$8 = pleaseReadGuide_result._0;
-              return Spice.error("pleaseReadGuide", e$8.message, e$8.value);
+              let e$8 = pleaseReadGuide._0;
+              return Spice.error("." + ("pleaseReadGuide" + e$8.path), e$8.message, e$8.value);
             }
-            let e$9 = shorthand_result._0;
-            return Spice.error("shorthand", e$9.message, e$9.value);
+            let e$9 = shorthand._0;
+            return Spice.error("." + ("shorthand" + e$9.path), e$9.message, e$9.value);
           }
-          let e$10 = autoMapping_result._0;
-          return Spice.error("autoMapping", e$10.message, e$10.value);
+          let e$10 = autoMapping._0;
+          return Spice.error("." + ("autoMapping" + e$10.path), e$10.message, e$10.value);
         }
-        let e$11 = focusInput_result._0;
-        return Spice.error("focusInput", e$11.message, e$11.value);
+        let e$11 = focusInput._0;
+        return Spice.error("." + ("focusInput" + e$11.path), e$11.message, e$11.value);
       }
-      let e$12 = animation_result._0;
-      return Spice.error("animation", e$12.message, e$12.value);
+      let e$12 = animation._0;
+      return Spice.error("." + ("animation" + e$12.path), e$12.message, e$12.value);
     }
-    let e$13 = height_result._0;
-    return Spice.error("height", e$13.message, e$13.value);
+    let e$13 = height._0;
+    return Spice.error("." + ("height" + e$13.path), e$13.message, e$13.value);
   }
-  let e$14 = width_result._0;
-  return Spice.error("width", e$14.message, e$14.value);
+  let e$14 = width._0;
+  return Spice.error("." + ("width" + e$14.path), e$14.message, e$14.value);
 }
 
 export {
   params_encode,
+  params_encodeJson,
   params_decode,
 }
 /* No side effect */
