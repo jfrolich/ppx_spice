@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.5.2
+
+- `Spice.optionalFieldFromJson`: also fall back to `None` when the inner decoder raises on a JSON `null` (bs-json-style hand-written codecs throw instead of returning an `Error`); before 0.4 the inner decoder was never invoked on null, so such codecs crashed on legacy data carrying explicit nulls
+
 ## 0.5.1
 
 - Suppress unused-value warnings for the generated `*_encodeJson` value encoders in modules with an interface

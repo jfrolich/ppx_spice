@@ -285,7 +285,15 @@ function optionalFieldFromJson(decoder, json) {
   if (json !== null) {
     return Stdlib_Result.map(decoder(json), v => Primitive_option.some(v));
   }
-  let v = decoder(json);
+  let v;
+  try {
+    v = decoder(json);
+  } catch (exn) {
+    return {
+      TAG: "Ok",
+      _0: undefined
+    };
+  }
   if (v.TAG === "Ok") {
     return {
       TAG: "Ok",

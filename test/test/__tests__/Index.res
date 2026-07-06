@@ -9,3 +9,4 @@ include Tuples_test
 include Variants_test
 include Dicts_test
 include Results_test
+include Raising_field_test

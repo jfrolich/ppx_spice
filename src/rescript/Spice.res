@@ -144,13 +144,17 @@ let optionalNullFromJson = (decoder, json) =>
 // For option/optional record fields. A JSON null defers to the inner decoder
 // (so Null.t and nested option fields keep it), but decodes to None instead
 // of erroring when the inner type cannot represent null. The fallback
-// diverges from upstream, which fails the decode.
+// diverges from upstream, which fails the decode. Hand-written codecs
+// predating spice raise (bs-json style) rather than return an Error, so the
+// fallback must also catch exceptions — before 0.4 the inner decoder was
+// never invoked on null and such codecs never saw a null.
 let optionalFieldFromJson = (decoder, json) =>
   switch (json: JSON.t) {
   | JSON.Null =>
     switch decoder(json) {
     | Ok(v) => Ok(Some(v))
     | Error(_) => Ok(None)
+    | exception _ => Ok(None)
     }
   | _ => Result.map(decoder(json), v => Some(v))
   }

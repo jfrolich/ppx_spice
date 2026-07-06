@@ -8,6 +8,7 @@ import * as Results_test from "./spec/results_test.mjs";
 import * as Variants_test from "./spec/variants_test.mjs";
 import * as Polyvariants_test from "./spec/polyvariants_test.mjs";
 import * as Encode_decode_test from "./spec/encode_decode_test.mjs";
+import * as Raising_field_test from "./spec/raising_field_test.mjs";
 import * as Top_level_options_test from "./spec/top_level_options_test.mjs";
 import * as Generic_type_params_test from "./spec/generic_type_params_test.mjs";
 import * as Optional_field_records_test from "./spec/optional_field_records_test.mjs";
@@ -36,7 +37,7 @@ let nestedTupleJson = Top_level_options_test.nestedTupleJson;
 
 let payloadVariantJson = Top_level_options_test.payloadVariantJson;
 
-let testEqual = Results_test.testEqual;
+let testEqual = Raising_field_test.testEqual;
 
 export {
   dataObject,
