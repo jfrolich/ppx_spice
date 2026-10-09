@@ -780,6 +780,37 @@ function point_decode(v) {
   return Spice.error("." + ("x" + e$1.path), e$1.message, e$1.value);
 }
 
+function withType_encode(v) {
+  return Object.fromEntries(Spice.filterOptional([[
+      "type",
+      Spice.stringToJson(v.kind)
+    ]]));
+}
+
+function withType_encodeJson(v) {
+  return Object.fromEntries(Spice.filterOptional([[
+      "type",
+      Spice.stringToJson(v.kind)
+    ]]));
+}
+
+function withType_decode(v) {
+  if (typeof v !== "object" || v === null || Array.isArray(v)) {
+    return Spice.error(undefined, "Not an object", v);
+  }
+  let kind = Stdlib_Option.getOr(Stdlib_Option.map(v["type"], Spice.stringFromJson), Spice.error(undefined, "type" + " missing", v));
+  if (kind.TAG === "Ok") {
+    return {
+      TAG: "Ok",
+      _0: {
+        kind: kind._0
+      }
+    };
+  }
+  let e = kind._0;
+  return Spice.error("." + ("type" + e.path), e.message, e.value);
+}
+
 function internal_encode(v) {
   if (typeof v !== "object") {
     return Object.fromEntries([[
@@ -788,6 +819,8 @@ function internal_encode(v) {
       ]]);
   }
   switch (v.type) {
+    case "Clash" :
+      return Spice.taggedObject("type", "Clash", withType_encodeJson(v._0));
     case "Point" :
       return Spice.taggedObject("type", "Point", point_encodeJson(v._0));
     case "NotAnObject" :
@@ -829,6 +862,8 @@ function internal_encodeJson(v) {
       ]]);
   }
   switch (v.type) {
+    case "Clash" :
+      return Spice.taggedObject("type", "Clash", withType_encodeJson(v._0));
     case "Point" :
       return Spice.taggedObject("type", "Point", point_encodeJson(v._0));
     case "NotAnObject" :
@@ -870,6 +905,29 @@ function internal_decode(v) {
     let match = v[0];
     if (typeof match === "string") {
       switch (match) {
+        case "Clash" :
+          if (v.length !== 2) {
+            return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
+          }
+          let v0 = withType_decode(v[1]);
+          if (v0.TAG === "Ok") {
+            return {
+              TAG: "Ok",
+              _0: {
+                type: "Clash",
+                _0: v0._0
+              }
+            };
+          }
+          let e = v0._0;
+          return {
+            TAG: "Error",
+            _0: {
+              path: "[1]" + e.path,
+              message: e.message,
+              value: e.value
+            }
+          };
         case "Full" :
           if (v.length !== 2) {
             return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
@@ -890,12 +948,12 @@ function internal_decode(v) {
                   }
                 };
               } else {
-                let e = punchIn._0;
-                v$2 = Spice.error("." + ("punch_in" + e.path), e.message, e.value);
+                let e$1 = punchIn._0;
+                v$2 = Spice.error("." + ("punch_in" + e$1.path), e$1.message, e$1.value);
               }
             } else {
-              let e$1 = screenFit._0;
-              v$2 = Spice.error("." + ("screenFit" + e$1.path), e$1.message, e$1.value);
+              let e$2 = screenFit._0;
+              v$2 = Spice.error("." + ("screenFit" + e$2.path), e$2.message, e$2.value);
             }
           } else {
             v$2 = Spice.error(undefined, "Not an object", v$1);
@@ -906,36 +964,36 @@ function internal_decode(v) {
               _0: v$2._0
             };
           }
-          let e$2 = v$2._0;
-          return {
-            TAG: "Error",
-            _0: {
-              path: "[1]" + e$2.path,
-              message: e$2.message,
-              value: e$2.value
-            }
-          };
-        case "NotAnObject" :
-          if (v.length !== 2) {
-            return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
-          }
-          let v0 = Spice.intFromJson(v[1]);
-          if (v0.TAG === "Ok") {
-            return {
-              TAG: "Ok",
-              _0: {
-                type: "NotAnObject",
-                _0: v0._0
-              }
-            };
-          }
-          let e$3 = v0._0;
+          let e$3 = v$2._0;
           return {
             TAG: "Error",
             _0: {
               path: "[1]" + e$3.path,
               message: e$3.message,
               value: e$3.value
+            }
+          };
+        case "NotAnObject" :
+          if (v.length !== 2) {
+            return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
+          }
+          let v0$1 = Spice.intFromJson(v[1]);
+          if (v0$1.TAG === "Ok") {
+            return {
+              TAG: "Ok",
+              _0: {
+                type: "NotAnObject",
+                _0: v0$1._0
+              }
+            };
+          }
+          let e$4 = v0$1._0;
+          return {
+            TAG: "Error",
+            _0: {
+              path: "[1]" + e$4.path,
+              message: e$4.message,
+              value: e$4.value
             }
           };
         case "Overlap" :
@@ -955,8 +1013,8 @@ function internal_decode(v) {
                 }
               };
             } else {
-              let e$4 = cameraSize._0;
-              v$4 = Spice.error("." + ("cameraSize" + e$4.path), e$4.message, e$4.value);
+              let e$5 = cameraSize._0;
+              v$4 = Spice.error("." + ("cameraSize" + e$5.path), e$5.message, e$5.value);
             }
           } else {
             v$4 = Spice.error(undefined, "Not an object", v$3);
@@ -967,36 +1025,36 @@ function internal_decode(v) {
               _0: v$4._0
             };
           }
-          let e$5 = v$4._0;
-          return {
-            TAG: "Error",
-            _0: {
-              path: "[1]" + e$5.path,
-              message: e$5.message,
-              value: e$5.value
-            }
-          };
-        case "Point" :
-          if (v.length !== 2) {
-            return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
-          }
-          let v0$1 = point_decode(v[1]);
-          if (v0$1.TAG === "Ok") {
-            return {
-              TAG: "Ok",
-              _0: {
-                type: "Point",
-                _0: v0$1._0
-              }
-            };
-          }
-          let e$6 = v0$1._0;
+          let e$6 = v$4._0;
           return {
             TAG: "Error",
             _0: {
               path: "[1]" + e$6.path,
               message: e$6.message,
               value: e$6.value
+            }
+          };
+        case "Point" :
+          if (v.length !== 2) {
+            return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
+          }
+          let v0$2 = point_decode(v[1]);
+          if (v0$2.TAG === "Ok") {
+            return {
+              TAG: "Ok",
+              _0: {
+                type: "Point",
+                _0: v0$2._0
+              }
+            };
+          }
+          let e$7 = v0$2._0;
+          return {
+            TAG: "Error",
+            _0: {
+              path: "[1]" + e$7.path,
+              message: e$7.message,
+              value: e$7.value
             }
           };
         case "Regular" :
@@ -1031,30 +1089,13 @@ function internal_decode(v) {
             _0: "Regular"
           };
         }
-        if (match$1 === "Point") {
-          let v0$2 = point_decode(v);
-          if (v0$2.TAG === "Ok") {
-            return {
-              TAG: "Ok",
-              _0: {
-                type: "Point",
-                _0: v0$2._0
-              }
-            };
-          } else {
-            return {
-              TAG: "Error",
-              _0: v0$2._0
-            };
-          }
-        }
-        if (match$1 === "NotAnObject") {
-          let v0$3 = Spice.intFromJson(v);
+        if (match$1 === "Clash") {
+          let v0$3 = withType_decode(v);
           if (v0$3.TAG === "Ok") {
             return {
               TAG: "Ok",
               _0: {
-                type: "NotAnObject",
+                type: "Clash",
                 _0: v0$3._0
               }
             };
@@ -1062,6 +1103,40 @@ function internal_decode(v) {
             return {
               TAG: "Error",
               _0: v0$3._0
+            };
+          }
+        }
+        if (match$1 === "Point") {
+          let v0$4 = point_decode(v);
+          if (v0$4.TAG === "Ok") {
+            return {
+              TAG: "Ok",
+              _0: {
+                type: "Point",
+                _0: v0$4._0
+              }
+            };
+          } else {
+            return {
+              TAG: "Error",
+              _0: v0$4._0
+            };
+          }
+        }
+        if (match$1 === "NotAnObject") {
+          let v0$5 = Spice.intFromJson(v);
+          if (v0$5.TAG === "Ok") {
+            return {
+              TAG: "Ok",
+              _0: {
+                type: "NotAnObject",
+                _0: v0$5._0
+              }
+            };
+          } else {
+            return {
+              TAG: "Error",
+              _0: v0$5._0
             };
           }
         }
@@ -1076,8 +1151,8 @@ function internal_decode(v) {
               }
             };
           }
-          let e$7 = cameraSize$1._0;
-          return Spice.error("." + ("cameraSize" + e$7.path), e$7.message, e$7.value);
+          let e$8 = cameraSize$1._0;
+          return Spice.error("." + ("cameraSize" + e$8.path), e$8.message, e$8.value);
         }
         if (match$1 !== "full") {
           return Spice.error(undefined, "Invalid variant constructor", v);
@@ -1095,11 +1170,11 @@ function internal_decode(v) {
               }
             };
           }
-          let e$8 = punchIn$1._0;
-          return Spice.error("." + ("punch_in" + e$8.path), e$8.message, e$8.value);
+          let e$9 = punchIn$1._0;
+          return Spice.error("." + ("punch_in" + e$9.path), e$9.message, e$9.value);
         }
-        let e$9 = screenFit$1._0;
-        return Spice.error("." + ("screenFit" + e$9.path), e$9.message, e$9.value);
+        let e$10 = screenFit$1._0;
+        return Spice.error("." + ("screenFit" + e$10.path), e$10.message, e$10.value);
       }
       return Spice.error(undefined, "type" + " missing", v);
     default:
@@ -1242,6 +1317,9 @@ export {
   point_encode,
   point_encodeJson,
   point_decode,
+  withType_encode,
+  withType_encodeJson,
+  withType_decode,
   internal_encode,
   internal_encodeJson,
   internal_decode,

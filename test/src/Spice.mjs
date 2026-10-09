@@ -7,6 +7,7 @@ import * as Stdlib_Math from "@rescript/runtime/lib/es6/Stdlib_Math.js";
 import * as Spice_Codecs from "./Spice_Codecs.mjs";
 import * as Stdlib_Array from "@rescript/runtime/lib/es6/Stdlib_Array.js";
 import * as Stdlib_BigInt from "@rescript/runtime/lib/es6/Stdlib_BigInt.js";
+import * as Stdlib_Option from "@rescript/runtime/lib/es6/Stdlib_Option.js";
 import * as Stdlib_Result from "@rescript/runtime/lib/es6/Stdlib_Result.js";
 import * as Stdlib_JsError from "@rescript/runtime/lib/es6/Stdlib_JsError.js";
 import * as Primitive_option from "@rescript/runtime/lib/es6/Primitive_option.js";
@@ -414,14 +415,17 @@ function dictFromJson(decoder, json) {
 
 function taggedObject(tag, name, json) {
   if (typeof json === "object" && json !== null && !Array.isArray(json)) {
-    let fields = Object.entries(json).filter(param => param[0] !== tag);
-    return Object.fromEntries(Belt_Array.concatMany([
-      [[
-          tag,
-          name
-        ]],
-      fields
-    ]));
+    if (Stdlib_Option.isSome(json[tag])) {
+      return Stdlib_JsError.throwWithMessage(`Can't encode ` + name + ` with tag "` + tag + `": its payload already has a "` + tag + `" key`);
+    } else {
+      return Object.fromEntries(Belt_Array.concatMany([
+        [[
+            tag,
+            name
+          ]],
+        Object.entries(json)
+      ]));
+    }
   }
   return Stdlib_JsError.throwWithMessage(`Can't encode ` + name + ` with tag "` + tag + `": its payload doesn't encode to an object`);
 }

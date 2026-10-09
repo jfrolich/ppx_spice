@@ -141,6 +141,14 @@ zoraBlock("@spice.serde internally tagged variants (@tag)", t => {
     decode(`{"type":"NotAnObject"}`)->isError,
     true,
   )
+  t->testEqual(
+    "a single value whose object has the tag key fails to encode",
+    switch Serde.Clash({kind: "k"})->Serde.internal_encode {
+    | exception _ => true
+    | _ => false
+    },
+    true,
+  )
   t->testEqual("missing tag fails", decode(`{"cameraSize":"S"}`)->isError, true)
   t->testEqual("unknown tag fails", decode(`{"type":"Other"}`)->isError, true)
 })

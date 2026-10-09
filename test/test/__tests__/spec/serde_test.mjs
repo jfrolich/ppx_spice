@@ -249,6 +249,19 @@ Zora.test("@spice.serde internally tagged variants (@tag)", t => {
   }
   testEqual(t, "a single value that isn't an object fails to encode", tmp, true);
   testEqual(t, "a single value that isn't an object fails to decode", isError(Serde.internal_decode(JSON.parse(`{"type":"NotAnObject"}`))), true);
+  let tmp$1;
+  try {
+    Serde.internal_encode({
+      type: "Clash",
+      _0: {
+        kind: "k"
+      }
+    });
+    tmp$1 = false;
+  } catch (exn$1) {
+    tmp$1 = true;
+  }
+  testEqual(t, "a single value whose object has the tag key fails to encode", tmp$1, true);
   testEqual(t, "missing tag fails", isError(Serde.internal_decode(JSON.parse(`{"cameraSize":"S"}`))), true);
   testEqual(t, "unknown tag fails", isError(Serde.internal_decode(JSON.parse(`{"type":"Other"}`))), true);
 });

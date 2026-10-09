@@ -64,8 +64,19 @@ let validate ~tag cases =
                     ...)]; use an inline record, or one value that encodes to \
                     an object"
              | Record fields ->
-                 if List.exists (fun { pld_name = { txt } } -> txt = tag) fields
-                 then fail loc ("A payload field is named like the tag " ^ tag))
+                 let json_key { pld_name = { txt }; pld_attributes } =
+                   match
+                     get_attribute_by_name pld_attributes
+                       (annotation_name ^ ".key")
+                   with
+                   | Ok (Some attribute) -> (
+                       match (get_expression_from_payload attribute).pexp_desc with
+                       | Pexp_constant (Pconst_string (key, _, _)) -> key
+                       | _ -> txt)
+                   | _ -> txt
+                 in
+                 if List.exists (fun field -> json_key field = tag) fields then
+                   fail loc ("A payload field is keyed like the tag " ^ tag))
 
 let encode_arg generator_settings arg name =
   let encoder, _ = Codecs.generate_value_codecs generator_settings arg in

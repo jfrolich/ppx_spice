@@ -217,9 +217,11 @@ let dictFromJson = (decoder, json) =>
 // its own object, like serde's internally tagged newtype variants.
 let taggedObject = (tag, name, json: JSON.t): JSON.t =>
   switch json {
-  | JSON.Object(dict) =>
-    let fields = dict->Dict.toArray->Array.filter(((key, _)) => key != tag)
-    JSON.Object(Dict.fromArray([(tag, JSON.String(name)), ...fields]))
+  | JSON.Object(dict) if dict->Dict.get(tag)->Option.isSome =>
+    JsError.throwWithMessage(
+      `Can't encode ${name} with tag "${tag}": its payload already has a "${tag}" key`,
+    )
+  | JSON.Object(dict) => JSON.Object(Dict.fromArray([(tag, JSON.String(name)), ...dict->Dict.toArray]))
   | _ =>
     JsError.throwWithMessage(
       `Can't encode ${name} with tag "${tag}": its payload doesn't encode to an object`,

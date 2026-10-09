@@ -11,6 +11,7 @@ const rescriptBin = join(testRoot, "node_modules", ".bin", binName);
 const fixtures = {
   "invalid-as-payload":
     "@spice.as is only supported on constructors without payload",
+  "serde-tag-key-clash": "A payload field is keyed like the tag type",
   "serde-tag-tuple-payload":
     "An internally tagged (@tag) @spice.serde constructor can't have several payload values",
 };

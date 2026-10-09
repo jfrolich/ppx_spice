@@ -15,8 +15,12 @@ type external_ =
 @spice
 type point = {x: int, y: int}
 
+@spice
+type withType = {@spice.key("type") kind: string}
+
 @spice.serde @tag("type")
 type internal =
+  | Clash(withType)
   | Point(point)
   | NotAnObject(int)
   | Regular
