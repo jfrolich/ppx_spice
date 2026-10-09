@@ -56,10 +56,13 @@ let validate ~tag cases =
       |> List.iter (fun { loc; payload } ->
              match payload with
              | Unit -> ()
+             | Args [ _ ] -> ()
              | Args _ ->
                  fail loc
-                   "An internally tagged (@tag) @spice.serde variant needs an \
-                    inline record payload, like serde's #[serde(tag = ...)]"
+                   "An internally tagged (@tag) @spice.serde constructor can't \
+                    have several payload values, like serde's #[serde(tag = \
+                    ...)]; use an inline record, or one value that encodes to \
+                    an object"
              | Record fields ->
                  if List.exists (fun { pld_name = { txt } } -> txt = tag) fields
                  then fail loc ("A payload field is named like the tag " ^ tag))
@@ -74,7 +77,11 @@ let encoder_case generator_settings ~tag { name; payload; lhs } =
     | Unit, None -> [%expr JSON.String [%e str name]]
     | Unit, Some tag ->
         json_object [ [%expr [%e str tag], JSON.String [%e str name]] ]
-    | Args args, _ ->
+    | Args args, Some tag ->
+        [%expr
+          Spice.taggedObject [%e str tag] [%e str name]
+            [%e encode_arg generator_settings (List.hd args) "v0"]]
+    | Args args, None ->
         let value =
           match
             List.map2 (encode_arg generator_settings) args (arg_names args)
@@ -212,14 +219,21 @@ let generate_decoder generator_settings ~tag ~legacy cases =
     | Some tag ->
         let records =
           cases
-          |> List.filter_map (fun { name; constructor; payload } ->
+          |> List.filter_map (fun ({ name; constructor; payload } as case) ->
                  match payload with
                  | Record fields ->
                      Some
                        ( name,
                          Records.generate_inline_record_decoder_expr
                            generator_settings fields constructor )
-                 | _ -> None)
+                 | Args args ->
+                     (* The payload decodes from the tagged object itself. *)
+                     Some
+                       ( name,
+                         [%expr
+                           let payload = v in
+                           [%e decode_args generator_settings case args]] )
+                 | Unit -> None)
         in
         [%expr
           match Dict.get dict [%e str tag] with

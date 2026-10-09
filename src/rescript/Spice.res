@@ -213,6 +213,19 @@ let dictFromJson = (decoder, json) =>
   | _ => Error({path: "", message: "Not a dict", value: json})
   }
 
+// For @spice.serde with @tag: a single-value payload carries the tag inside
+// its own object, like serde's internally tagged newtype variants.
+let taggedObject = (tag, name, json: JSON.t): JSON.t =>
+  switch json {
+  | JSON.Object(dict) =>
+    let fields = dict->Dict.toArray->Array.filter(((key, _)) => key != tag)
+    JSON.Object(Dict.fromArray([(tag, JSON.String(name)), ...fields]))
+  | _ =>
+    JsError.throwWithMessage(
+      `Can't encode ${name} with tag "${tag}": its payload doesn't encode to an object`,
+    )
+  }
+
 module Codecs = {
   include Spice_Codecs
   let string = (stringToJson, stringFromJson)

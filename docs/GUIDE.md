@@ -118,14 +118,20 @@ type shape =
   | Polygon({sides: int}) // {"Polygon": {"sides": 5}}
 ```
 
-With ReScript's `@tag("...")`, variants are internally tagged, like `#[serde(tag = "...")]`. Every constructor with a payload must have an inline record, as serde requires:
+With ReScript's `@tag("...")`, variants are internally tagged, like `#[serde(tag = "...")]`: the tag goes into the payload's own object. So, as in serde, a constructor takes an inline record or one value that encodes to an object; several values are a compile error.
 
 ```rescript
+@spice
+type point = {x: int, y: int}
+
 @spice.serde @tag("type")
 type shape =
   | Circle // {"type": "Circle"}
   | Polygon({sides: int}) // {"type": "Polygon", "sides": 5}
+  | Dot(point) // {"type": "Dot", "x": 1, "y": 2}
 ```
+
+Like serde, a single value that doesn't encode to an object (`Dot(5)` for `Dot(int)`) can't carry the tag: encoding throws and decoding fails.
 
 For constructors with an inline record this is also the variant's runtime representation in ReScript.
 

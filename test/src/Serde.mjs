@@ -731,38 +731,93 @@ function external__decode(v) {
   }
 }
 
+function point_encode(v) {
+  return Object.fromEntries(Spice.filterOptional([
+    [
+      "x",
+      Spice.intToJson(v.x)
+    ],
+    [
+      "y",
+      Spice.intToJson(v.y)
+    ]
+  ]));
+}
+
+function point_encodeJson(v) {
+  return Object.fromEntries(Spice.filterOptional([
+    [
+      "x",
+      Spice.intToJson(v.x)
+    ],
+    [
+      "y",
+      Spice.intToJson(v.y)
+    ]
+  ]));
+}
+
+function point_decode(v) {
+  if (typeof v !== "object" || v === null || Array.isArray(v)) {
+    return Spice.error(undefined, "Not an object", v);
+  }
+  let x = Stdlib_Option.getOr(Stdlib_Option.map(v["x"], Spice.intFromJson), Spice.error(undefined, "x" + " missing", v));
+  if (x.TAG === "Ok") {
+    let y = Stdlib_Option.getOr(Stdlib_Option.map(v["y"], Spice.intFromJson), Spice.error(undefined, "y" + " missing", v));
+    if (y.TAG === "Ok") {
+      return {
+        TAG: "Ok",
+        _0: {
+          x: x._0,
+          y: y._0
+        }
+      };
+    }
+    let e = y._0;
+    return Spice.error("." + ("y" + e.path), e.message, e.value);
+  }
+  let e$1 = x._0;
+  return Spice.error("." + ("x" + e$1.path), e$1.message, e$1.value);
+}
+
 function internal_encode(v) {
   if (typeof v !== "object") {
     return Object.fromEntries([[
         "type",
         "Regular"
       ]]);
-  } else if (v.type === "Overlap") {
-    return Object.fromEntries(Spice.filterOptional([
-      [
-        "type",
-        "Overlap"
-      ],
-      [
-        "cameraSize",
-        size_encodeJson(v.cameraSize)
-      ]
-    ]));
-  } else {
-    return Object.fromEntries(Spice.filterOptional([
-      [
-        "type",
-        "full"
-      ],
-      [
-        "screenFit",
-        Spice.stringToJson(v.screenFit)
-      ],
-      [
-        "punch_in",
-        Spice.boolToJson(v.punchIn)
-      ]
-    ]));
+  }
+  switch (v.type) {
+    case "Point" :
+      return Spice.taggedObject("type", "Point", point_encodeJson(v._0));
+    case "NotAnObject" :
+      return Spice.taggedObject("type", "NotAnObject", Spice.intToJson(v._0));
+    case "Overlap" :
+      return Object.fromEntries(Spice.filterOptional([
+        [
+          "type",
+          "Overlap"
+        ],
+        [
+          "cameraSize",
+          size_encodeJson(v.cameraSize)
+        ]
+      ]));
+    case "Full" :
+      return Object.fromEntries(Spice.filterOptional([
+        [
+          "type",
+          "full"
+        ],
+        [
+          "screenFit",
+          Spice.stringToJson(v.screenFit)
+        ],
+        [
+          "punch_in",
+          Spice.boolToJson(v.punchIn)
+        ]
+      ]));
   }
 }
 
@@ -772,32 +827,38 @@ function internal_encodeJson(v) {
         "type",
         "Regular"
       ]]);
-  } else if (v.type === "Overlap") {
-    return Object.fromEntries(Spice.filterOptional([
-      [
-        "type",
-        "Overlap"
-      ],
-      [
-        "cameraSize",
-        size_encodeJson(v.cameraSize)
-      ]
-    ]));
-  } else {
-    return Object.fromEntries(Spice.filterOptional([
-      [
-        "type",
-        "full"
-      ],
-      [
-        "screenFit",
-        Spice.stringToJson(v.screenFit)
-      ],
-      [
-        "punch_in",
-        Spice.boolToJson(v.punchIn)
-      ]
-    ]));
+  }
+  switch (v.type) {
+    case "Point" :
+      return Spice.taggedObject("type", "Point", point_encodeJson(v._0));
+    case "NotAnObject" :
+      return Spice.taggedObject("type", "NotAnObject", Spice.intToJson(v._0));
+    case "Overlap" :
+      return Object.fromEntries(Spice.filterOptional([
+        [
+          "type",
+          "Overlap"
+        ],
+        [
+          "cameraSize",
+          size_encodeJson(v.cameraSize)
+        ]
+      ]));
+    case "Full" :
+      return Object.fromEntries(Spice.filterOptional([
+        [
+          "type",
+          "full"
+        ],
+        [
+          "screenFit",
+          Spice.stringToJson(v.screenFit)
+        ],
+        [
+          "punch_in",
+          Spice.boolToJson(v.punchIn)
+        ]
+      ]));
   }
 }
 
@@ -854,6 +915,29 @@ function internal_decode(v) {
               value: e$2.value
             }
           };
+        case "NotAnObject" :
+          if (v.length !== 2) {
+            return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
+          }
+          let v0 = Spice.intFromJson(v[1]);
+          if (v0.TAG === "Ok") {
+            return {
+              TAG: "Ok",
+              _0: {
+                type: "NotAnObject",
+                _0: v0._0
+              }
+            };
+          }
+          let e$3 = v0._0;
+          return {
+            TAG: "Error",
+            _0: {
+              path: "[1]" + e$3.path,
+              message: e$3.message,
+              value: e$3.value
+            }
+          };
         case "Overlap" :
           if (v.length !== 2) {
             return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
@@ -871,8 +955,8 @@ function internal_decode(v) {
                 }
               };
             } else {
-              let e$3 = cameraSize._0;
-              v$4 = Spice.error("." + ("cameraSize" + e$3.path), e$3.message, e$3.value);
+              let e$4 = cameraSize._0;
+              v$4 = Spice.error("." + ("cameraSize" + e$4.path), e$4.message, e$4.value);
             }
           } else {
             v$4 = Spice.error(undefined, "Not an object", v$3);
@@ -883,13 +967,36 @@ function internal_decode(v) {
               _0: v$4._0
             };
           }
-          let e$4 = v$4._0;
+          let e$5 = v$4._0;
           return {
             TAG: "Error",
             _0: {
-              path: "[1]" + e$4.path,
-              message: e$4.message,
-              value: e$4.value
+              path: "[1]" + e$5.path,
+              message: e$5.message,
+              value: e$5.value
+            }
+          };
+        case "Point" :
+          if (v.length !== 2) {
+            return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
+          }
+          let v0$1 = point_decode(v[1]);
+          if (v0$1.TAG === "Ok") {
+            return {
+              TAG: "Ok",
+              _0: {
+                type: "Point",
+                _0: v0$1._0
+              }
+            };
+          }
+          let e$6 = v0$1._0;
+          return {
+            TAG: "Error",
+            _0: {
+              path: "[1]" + e$6.path,
+              message: e$6.message,
+              value: e$6.value
             }
           };
         case "Regular" :
@@ -924,6 +1031,40 @@ function internal_decode(v) {
             _0: "Regular"
           };
         }
+        if (match$1 === "Point") {
+          let v0$2 = point_decode(v);
+          if (v0$2.TAG === "Ok") {
+            return {
+              TAG: "Ok",
+              _0: {
+                type: "Point",
+                _0: v0$2._0
+              }
+            };
+          } else {
+            return {
+              TAG: "Error",
+              _0: v0$2._0
+            };
+          }
+        }
+        if (match$1 === "NotAnObject") {
+          let v0$3 = Spice.intFromJson(v);
+          if (v0$3.TAG === "Ok") {
+            return {
+              TAG: "Ok",
+              _0: {
+                type: "NotAnObject",
+                _0: v0$3._0
+              }
+            };
+          } else {
+            return {
+              TAG: "Error",
+              _0: v0$3._0
+            };
+          }
+        }
         if (match$1 === "Overlap") {
           let cameraSize$1 = Stdlib_Option.getOr(Stdlib_Option.map(v["cameraSize"], size_decode), Spice.error(undefined, "cameraSize" + " missing", v));
           if (cameraSize$1.TAG === "Ok") {
@@ -935,8 +1076,8 @@ function internal_decode(v) {
               }
             };
           }
-          let e$5 = cameraSize$1._0;
-          return Spice.error("." + ("cameraSize" + e$5.path), e$5.message, e$5.value);
+          let e$7 = cameraSize$1._0;
+          return Spice.error("." + ("cameraSize" + e$7.path), e$7.message, e$7.value);
         }
         if (match$1 !== "full") {
           return Spice.error(undefined, "Invalid variant constructor", v);
@@ -954,11 +1095,11 @@ function internal_decode(v) {
               }
             };
           }
-          let e$6 = punchIn$1._0;
-          return Spice.error("." + ("punch_in" + e$6.path), e$6.message, e$6.value);
+          let e$8 = punchIn$1._0;
+          return Spice.error("." + ("punch_in" + e$8.path), e$8.message, e$8.value);
         }
-        let e$7 = screenFit$1._0;
-        return Spice.error("." + ("screenFit" + e$7.path), e$7.message, e$7.value);
+        let e$9 = screenFit$1._0;
+        return Spice.error("." + ("screenFit" + e$9.path), e$9.message, e$9.value);
       }
       return Spice.error(undefined, "type" + " missing", v);
     default:
@@ -1098,6 +1239,9 @@ export {
   external__encode,
   external__encodeJson,
   external__decode,
+  point_encode,
+  point_encodeJson,
+  point_decode,
   internal_encode,
   internal_encodeJson,
   internal_decode,

@@ -12,7 +12,7 @@ const fixtures = {
   "invalid-as-payload":
     "@spice.as is only supported on constructors without payload",
   "serde-tag-tuple-payload":
-    "An internally tagged (@tag) @spice.serde variant needs an inline record payload",
+    "An internally tagged (@tag) @spice.serde constructor can't have several payload values",
 };
 
 let failed = false;

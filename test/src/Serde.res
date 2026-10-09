@@ -12,8 +12,13 @@ type external_ =
   | Pair(string, bool)
   | Rec({a: string, b: option<int>})
 
+@spice
+type point = {x: int, y: int}
+
 @spice.serde @tag("type")
 type internal =
+  | Point(point)
+  | NotAnObject(int)
   | Regular
   | Overlap({cameraSize: size})
   | @spice.as("full") Full({screenFit: string, @spice.key("punch_in") punchIn: bool})

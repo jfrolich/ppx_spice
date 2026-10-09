@@ -113,6 +113,34 @@ zoraBlock("@spice.serde internally tagged variants (@tag)", t => {
     decode(`{"type":"Overlap","cameraSize":"XL"}`)->Result.mapError(e => e.path),
     Error(".cameraSize"),
   )
+  t->testEqual(
+    "encode a single value into its object",
+    Serde.Point({x: 1, y: 2})->Serde.internal_encode,
+    json(`{"type":"Point","x":1,"y":2}`),
+  )
+  t->testEqual(
+    "decode a single value from the tagged object",
+    decode(`{"y":2,"type":"Point","x":1}`),
+    Ok(Serde.Point({x: 1, y: 2})),
+  )
+  t->testEqual(
+    "decode a legacy single value",
+    decode(`["Point",{"x":1,"y":2}]`),
+    Ok(Serde.Point({x: 1, y: 2})),
+  )
+  t->testEqual(
+    "a single value that isn't an object fails to encode",
+    switch Serde.NotAnObject(1)->Serde.internal_encode {
+    | exception _ => true
+    | _ => false
+    },
+    true,
+  )
+  t->testEqual(
+    "a single value that isn't an object fails to decode",
+    decode(`{"type":"NotAnObject"}`)->isError,
+    true,
+  )
   t->testEqual("missing tag fails", decode(`{"cameraSize":"S"}`)->isError, true)
   t->testEqual("unknown tag fails", decode(`{"type":"Other"}`)->isError, true)
 })

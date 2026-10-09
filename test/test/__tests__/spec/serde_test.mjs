@@ -210,6 +210,45 @@ Zora.test("@spice.serde internally tagged variants (@tag)", t => {
     TAG: "Error",
     _0: ".cameraSize"
   });
+  testEqual(t, "encode a single value into its object", Serde.internal_encode({
+    type: "Point",
+    _0: {
+      x: 1,
+      y: 2
+    }
+  }), JSON.parse(`{"type":"Point","x":1,"y":2}`));
+  testEqual(t, "decode a single value from the tagged object", Serde.internal_decode(JSON.parse(`{"y":2,"type":"Point","x":1}`)), {
+    TAG: "Ok",
+    _0: {
+      type: "Point",
+      _0: {
+        x: 1,
+        y: 2
+      }
+    }
+  });
+  testEqual(t, "decode a legacy single value", Serde.internal_decode(JSON.parse(`["Point",{"x":1,"y":2}]`)), {
+    TAG: "Ok",
+    _0: {
+      type: "Point",
+      _0: {
+        x: 1,
+        y: 2
+      }
+    }
+  });
+  let tmp;
+  try {
+    Serde.internal_encode({
+      type: "NotAnObject",
+      _0: 1
+    });
+    tmp = false;
+  } catch (exn) {
+    tmp = true;
+  }
+  testEqual(t, "a single value that isn't an object fails to encode", tmp, true);
+  testEqual(t, "a single value that isn't an object fails to decode", isError(Serde.internal_decode(JSON.parse(`{"type":"NotAnObject"}`))), true);
   testEqual(t, "missing tag fails", isError(Serde.internal_decode(JSON.parse(`{"cameraSize":"S"}`))), true);
   testEqual(t, "unknown tag fails", isError(Serde.internal_decode(JSON.parse(`{"type":"Other"}`))), true);
 });

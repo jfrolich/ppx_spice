@@ -1,2 +1,2 @@
 @spice.serde @tag("type")
-type t = Single(int)
+type t = Pair(int, int)

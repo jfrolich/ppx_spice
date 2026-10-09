@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- `@spice.serde`: encode variants and polymorphic variants like Rust's serde derive, externally tagged by default and internally tagged with ReScript's `@tag("...")`. Decoders also accept the default spice encoding, so previously stored JSON keeps decoding. See [Serde-compatible variants](docs/GUIDE.md#serde-compatible-variants).
+- `@spice.serde`: encode variants and polymorphic variants like Rust's serde derive, externally tagged by default and internally tagged with ReScript's `@tag("...")` (inline records, or one value that encodes to an object). Decoders also accept the default spice encoding, so previously stored JSON keeps decoding. See [Serde-compatible variants](docs/GUIDE.md#serde-compatible-variants).
 
 ## 0.5.2
 
