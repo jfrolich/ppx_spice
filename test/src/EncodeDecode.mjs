@@ -35,25 +35,25 @@ function td_decode(v) {
   if (typeof v !== "object" || v === null || Array.isArray(v)) {
     return Spice.error(undefined, "Not an object", v);
   }
-  let name = Stdlib_Option.getOr(Stdlib_Option.map(v["name"], Spice.stringFromJson), Spice.error(undefined, "name" + " missing", v));
-  if (name.TAG === "Ok") {
-    let nickname = Stdlib_Option.getOr(Stdlib_Option.map(v["nickname"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+  let spice_field_name = Stdlib_Option.getOr(Stdlib_Option.map(v["name"], Spice.stringFromJson), Spice.error(undefined, "name" + " missing", v));
+  if (spice_field_name.TAG === "Ok") {
+    let spice_field_nickname = Stdlib_Option.getOr(Stdlib_Option.map(v["nickname"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
       TAG: "Ok",
       _0: undefined
     });
-    if (nickname.TAG === "Ok") {
+    if (spice_field_nickname.TAG === "Ok") {
       return {
         TAG: "Ok",
         _0: {
-          name: name._0,
-          nickname: nickname._0
+          name: spice_field_name._0,
+          nickname: spice_field_nickname._0
         }
       };
     }
-    let e = nickname._0;
+    let e = spice_field_nickname._0;
     return Spice.error("." + ("nickname" + e.path), e.message, e.value);
   }
-  let e$1 = name._0;
+  let e$1 = spice_field_name._0;
   return Spice.error("." + ("name" + e$1.path), e$1.message, e$1.value);
 }
 

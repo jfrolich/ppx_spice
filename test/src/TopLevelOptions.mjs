@@ -220,16 +220,16 @@ function optionRecord_decode(v) {
   if (typeof v !== "object" || v === null || Array.isArray(v)) {
     return Spice.error(undefined, "Not an object", v);
   }
-  let title = Stdlib_Option.getOr(Stdlib_Option.map(v["title"], Spice.stringFromJson), Spice.error(undefined, "title" + " missing", v));
-  if (title.TAG === "Ok") {
-    let optionalAlias = Stdlib_Option.getOr(Stdlib_Option.map(v["optionalAlias"], extra => Spice.optionalFieldFromJson(mystring_decode, extra)), {
+  let spice_field_title = Stdlib_Option.getOr(Stdlib_Option.map(v["title"], Spice.stringFromJson), Spice.error(undefined, "title" + " missing", v));
+  if (spice_field_title.TAG === "Ok") {
+    let spice_field_optionalAlias = Stdlib_Option.getOr(Stdlib_Option.map(v["optionalAlias"], extra => Spice.optionalFieldFromJson(mystring_decode, extra)), {
       TAG: "Ok",
       _0: undefined
     });
-    if (optionalAlias.TAG === "Ok") {
-      let aliases = Stdlib_Option.getOr(Stdlib_Option.map(v["aliases"], extra => Spice.arrayFromJson(mystring_decode, extra)), Spice.error(undefined, "aliases" + " missing", v));
-      if (aliases.TAG === "Ok") {
-        let tuple = Stdlib_Option.getOr(Stdlib_Option.map(v["tuple"], json => {
+    if (spice_field_optionalAlias.TAG === "Ok") {
+      let spice_field_aliases = Stdlib_Option.getOr(Stdlib_Option.map(v["aliases"], extra => Spice.arrayFromJson(mystring_decode, extra)), Spice.error(undefined, "aliases" + " missing", v));
+      if (spice_field_aliases.TAG === "Ok") {
+        let spice_field_tuple = Stdlib_Option.getOr(Stdlib_Option.map(v["tuple"], json => {
           if (!Array.isArray(json)) {
             return Spice.error(undefined, "Not a tuple", json);
           }
@@ -270,33 +270,33 @@ function optionRecord_decode(v) {
             }
           };
         }), Spice.error(undefined, "tuple" + " missing", v));
-        if (tuple.TAG === "Ok") {
-          let result = Stdlib_Option.getOr(Stdlib_Option.map(v["result"], extra => Spice.resultFromJson(mystring_decode, extra => Spice.optionFromJson(Spice.stringFromJson, extra), extra)), Spice.error(undefined, "result" + " missing", v));
-          if (result.TAG === "Ok") {
+        if (spice_field_tuple.TAG === "Ok") {
+          let spice_field_result = Stdlib_Option.getOr(Stdlib_Option.map(v["result"], extra => Spice.resultFromJson(mystring_decode, extra => Spice.optionFromJson(Spice.stringFromJson, extra), extra)), Spice.error(undefined, "result" + " missing", v));
+          if (spice_field_result.TAG === "Ok") {
             return {
               TAG: "Ok",
               _0: {
-                title: title._0,
-                optionalAlias: optionalAlias._0,
-                aliases: aliases._0,
-                tuple: tuple._0,
-                result: result._0
+                title: spice_field_title._0,
+                optionalAlias: spice_field_optionalAlias._0,
+                aliases: spice_field_aliases._0,
+                tuple: spice_field_tuple._0,
+                result: spice_field_result._0
               }
             };
           }
-          let e = result._0;
+          let e = spice_field_result._0;
           return Spice.error("." + ("result" + e.path), e.message, e.value);
         }
-        let e$1 = tuple._0;
+        let e$1 = spice_field_tuple._0;
         return Spice.error("." + ("tuple" + e$1.path), e$1.message, e$1.value);
       }
-      let e$2 = aliases._0;
+      let e$2 = spice_field_aliases._0;
       return Spice.error("." + ("aliases" + e$2.path), e$2.message, e$2.value);
     }
-    let e$3 = optionalAlias._0;
+    let e$3 = spice_field_optionalAlias._0;
     return Spice.error("." + ("optionalAlias" + e$3.path), e$3.message, e$3.value);
   }
-  let e$4 = title._0;
+  let e$4 = spice_field_title._0;
   return Spice.error("." + ("title" + e$4.path), e$4.message, e$4.value);
 }
 
@@ -621,40 +621,40 @@ function nestedContainer_decode(v) {
   if (typeof v !== "object" || v === null || Array.isArray(v)) {
     return Spice.error(undefined, "Not an object", v);
   }
-  let maybePayload = Stdlib_Option.getOr(Stdlib_Option.map(v["maybePayload"], maybeOptionRecord_decode), Spice.error(undefined, "maybePayload" + " missing", v));
-  if (maybePayload.TAG === "Ok") {
-    let variant = Stdlib_Option.getOr(Stdlib_Option.map(v["variant"], nestedVariant_decode), Spice.error(undefined, "variant" + " missing", v));
-    if (variant.TAG === "Ok") {
-      let tuple = Stdlib_Option.getOr(Stdlib_Option.map(v["tuple"], nestedTuple_decode), Spice.error(undefined, "tuple" + " missing", v));
-      if (tuple.TAG === "Ok") {
-        let variants = Stdlib_Option.getOr(Stdlib_Option.map(v["variants"], extra => Spice.arrayFromJson(nestedVariant_decode, extra)), Spice.error(undefined, "variants" + " missing", v));
-        if (variants.TAG === "Ok") {
-          let result = Stdlib_Option.getOr(Stdlib_Option.map(v["result"], extra => Spice.resultFromJson(maybeOptionRecord_decode, extra => Spice.optionFromJson(Spice.stringFromJson, extra), extra)), Spice.error(undefined, "result" + " missing", v));
-          if (result.TAG === "Ok") {
+  let spice_field_maybePayload = Stdlib_Option.getOr(Stdlib_Option.map(v["maybePayload"], maybeOptionRecord_decode), Spice.error(undefined, "maybePayload" + " missing", v));
+  if (spice_field_maybePayload.TAG === "Ok") {
+    let spice_field_variant = Stdlib_Option.getOr(Stdlib_Option.map(v["variant"], nestedVariant_decode), Spice.error(undefined, "variant" + " missing", v));
+    if (spice_field_variant.TAG === "Ok") {
+      let spice_field_tuple = Stdlib_Option.getOr(Stdlib_Option.map(v["tuple"], nestedTuple_decode), Spice.error(undefined, "tuple" + " missing", v));
+      if (spice_field_tuple.TAG === "Ok") {
+        let spice_field_variants = Stdlib_Option.getOr(Stdlib_Option.map(v["variants"], extra => Spice.arrayFromJson(nestedVariant_decode, extra)), Spice.error(undefined, "variants" + " missing", v));
+        if (spice_field_variants.TAG === "Ok") {
+          let spice_field_result = Stdlib_Option.getOr(Stdlib_Option.map(v["result"], extra => Spice.resultFromJson(maybeOptionRecord_decode, extra => Spice.optionFromJson(Spice.stringFromJson, extra), extra)), Spice.error(undefined, "result" + " missing", v));
+          if (spice_field_result.TAG === "Ok") {
             return {
               TAG: "Ok",
               _0: {
-                maybePayload: maybePayload._0,
-                variant: variant._0,
-                tuple: tuple._0,
-                variants: variants._0,
-                result: result._0
+                maybePayload: spice_field_maybePayload._0,
+                variant: spice_field_variant._0,
+                tuple: spice_field_tuple._0,
+                variants: spice_field_variants._0,
+                result: spice_field_result._0
               }
             };
           }
-          let e = result._0;
+          let e = spice_field_result._0;
           return Spice.error("." + ("result" + e.path), e.message, e.value);
         }
-        let e$1 = variants._0;
+        let e$1 = spice_field_variants._0;
         return Spice.error("." + ("variants" + e$1.path), e$1.message, e$1.value);
       }
-      let e$2 = tuple._0;
+      let e$2 = spice_field_tuple._0;
       return Spice.error("." + ("tuple" + e$2.path), e$2.message, e$2.value);
     }
-    let e$3 = variant._0;
+    let e$3 = spice_field_variant._0;
     return Spice.error("." + ("variant" + e$3.path), e$3.message, e$3.value);
   }
-  let e$4 = maybePayload._0;
+  let e$4 = spice_field_maybePayload._0;
   return Spice.error("." + ("maybePayload" + e$4.path), e$4.message, e$4.value);
 }
 

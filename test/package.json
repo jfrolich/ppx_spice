@@ -18,7 +18,7 @@
     "res:clean": "rescript clean",
     "res:watch": "rescript watch",
     "test:watch": "onchange --initial '{test,src}/**/*.mjs' -- pta 'test/__tests__/**/*.mjs' | tap-difflet",
-    "test:compile-fail": "node ./scripts/expect-invalid-as-payload.mjs",
+    "test:compile-fail": "node ./scripts/expect-compile-errors.mjs",
     "test": "pta './test/__tests__/Index.mjs' | tap-difflet && pnpm test:compile-fail"
   }
 }

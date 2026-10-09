@@ -6,6 +6,7 @@ This document walks you through the basics of using ppx_spice. You can try with 
 
 - [Basic Usage](#basic-usage)
 - [Variants](#variants)
+- [Serde-compatible variants](#serde-compatible-variants)
 - [Advanced Usage](#advanced-usage)
 
 ### Basic Usage
@@ -101,6 +102,46 @@ type thing =
 let encoded = Boo({a: "Bo"})->thing_encode
 // ["Boo", {"a": "Bo"}]
 ```
+
+### Serde-compatible variants
+
+`@spice.serde` encodes a variant or polymorphic variant the way Rust's [serde](https://serde.rs/enum-representations.html) derive does, so a type shared with a Rust service reads the same JSON on both sides. It enables both the encoder and the decoder; `@spice` is not needed next to it.
+
+Without `@tag`, variants are externally tagged, serde's default:
+
+```rescript
+@spice.serde
+type shape =
+  | Circle // "Circle"
+  | Square(float) // {"Square": 2.0}
+  | Rect(float, float) // {"Rect": [2.0, 3.0]}
+  | Polygon({sides: int}) // {"Polygon": {"sides": 5}}
+```
+
+With ReScript's `@tag("...")`, variants are internally tagged, like `#[serde(tag = "...")]`: the tag goes into the payload's own object. So, as in serde, a constructor takes an inline record or one value that encodes to an object; several values are a compile error.
+
+```rescript
+@spice
+type point = {x: int, y: int}
+
+@spice.serde @tag("type")
+type shape =
+  | Circle // {"type": "Circle"}
+  | Polygon({sides: int}) // {"type": "Polygon", "sides": 5}
+  | Dot(point) // {"type": "Dot", "x": 1, "y": 2}
+```
+
+Like serde, a single value that doesn't encode to an object (`Dot(5)` for `Dot(int)`) can't carry the tag: encoding throws and decoding fails.
+
+For constructors with an inline record this is also the variant's runtime representation in ReScript.
+
+`@spice.as("...")` renames a constructor in JSON, like `#[serde(rename = "...")]`, and may be used on any constructor. Polymorphic variants are always externally tagged.
+
+Two constructors can't share a JSON name, and with `@tag` no payload field may be keyed like the tag; both are compile errors.
+
+As in serde, decoders ignore keys they don't know, a constructor without payload also decodes from `{"Name": null}` (externally tagged), and an `option<option<_>>` payload loses `Some(None)`, which encodes as `null` like `None`.
+
+The decoders also accept the default spice encoding (`["Polygon", {"sides": 5}]`), so JSON written before a type switched to `@spice.serde` keeps decoding. Internally tagged decoders also accept a bare string for constructors without payload (`"Circle"`). Encoders only write the serde form.
 
 ### Option and Null
 

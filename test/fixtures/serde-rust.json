@@ -1,0 +1,138 @@
+{
+  "ext_float": {
+    "Float": 1.5
+  },
+  "ext_list": {
+    "List": [
+      1,
+      2,
+      3
+    ]
+  },
+  "ext_list_empty": {
+    "List": []
+  },
+  "ext_map": {
+    "Map": {
+      "a": 1,
+      "b": 2
+    }
+  },
+  "ext_nested": {
+    "Nested": {
+      "Nested": "Unit"
+    }
+  },
+  "ext_opt_none": {
+    "Opt": null
+  },
+  "ext_opt_some": {
+    "Opt": 1
+  },
+  "ext_pair": {
+    "Pair": [
+      "x",
+      false
+    ]
+  },
+  "ext_point": {
+    "Point": {
+      "x": 1,
+      "y": -2
+    }
+  },
+  "ext_rec": {
+    "Rec": {
+      "a": "a",
+      "b": 2
+    }
+  },
+  "ext_rec_none": {
+    "Rec": {
+      "a": "a"
+    }
+  },
+  "ext_renamed": "renamed",
+  "ext_single": {
+    "Single": 7
+  },
+  "ext_two": "둘",
+  "ext_unit": "Unit",
+  "gen_e": {
+    "type": "E"
+  },
+  "gen_g": {
+    "type": "G",
+    "value": [
+      "a",
+      "b"
+    ]
+  },
+  "int_full": {
+    "punch_in": true,
+    "screenFit": "cover",
+    "type": "full"
+  },
+  "int_map": {
+    "k": 5,
+    "type": "Map"
+  },
+  "int_map_empty": {
+    "type": "Map"
+  },
+  "int_overlap": {
+    "cameraSize": "large",
+    "type": "Overlap"
+  },
+  "int_point": {
+    "type": "Point",
+    "x": 3,
+    "y": 4
+  },
+  "int_regular": {
+    "type": "Regular"
+  },
+  "nested": {
+    "kind": "SideBySide",
+    "position": {
+      "Pair": [
+        "p",
+        false
+      ]
+    },
+    "style": {
+      "cameraSize": "M",
+      "type": "Overlap"
+    }
+  },
+  "poly_left": "Left",
+  "poly_pair": {
+    "Pair": [
+      "a\"b",
+      true
+    ]
+  },
+  "poly_payload": {
+    "Payload": -3
+  },
+  "poly_right": "Right",
+  "size_l": "large",
+  "size_s": "S",
+  "tree": {
+    "Node": {
+      "left": "Leaf",
+      "right": {
+        "Node": {
+          "left": "Leaf",
+          "right": "Leaf",
+          "value": 2
+        }
+      },
+      "value": 1
+    }
+  },
+  "with_null": {
+    "b": null,
+    "type": "N"
+  }
+}

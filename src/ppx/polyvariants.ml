@@ -215,9 +215,54 @@ let parse_decl ({ prf_desc; prf_loc; prf_attributes } as row_field) =
 
   { name = txt; alias; has_attr_as; row_field }
 
+let serde_case { name; alias; has_attr_as; row_field = { prf_desc; prf_loc } }
+    : Serde.case =
+  let args =
+    match prf_desc with
+    | Rtag (_, _, core_types) -> get_args_from_polyvars ~loc core_types
+    | Rinherit arg ->
+        fail arg.ptyp_loc "This syntax is not yet implemented by spice"
+  in
+  {
+    name = Serde.name_of_alias ~loc:prf_loc ~has_attr_as ~alias name;
+    constructor = name;
+    loc = prf_loc;
+    payload = (match args with [] -> Serde.Unit | _ -> Serde.Args args);
+    lhs = Pat.variant name (Serde.args_pattern args);
+    construct = Exp.variant name;
+  }
+
+let generate_legacy_decoder generator_settings row_fields =
+  let default_case =
+    {
+      pc_lhs = [%pat? _];
+      pc_guard = None;
+      pc_rhs =
+        [%expr
+          Spice.error "Invalid polymorphic variant constructor"
+            (Array.getUnsafe json_arr 0)];
+    }
+  in
+  row_fields
+  |> List.map (generate_decoder_case generator_settings)
+  |> fun cases ->
+  cases @ [ default_case ] |> Exp.match_ [%expr Array.getUnsafe json_arr 0]
+
 let generate_codecs ({ do_encode; do_decode } as generator_settings) row_fields
     unboxed =
   let parsed_fields = List.map parse_decl row_fields in
+  match generator_settings.serde with
+  | Some { tag = Some _ } ->
+      fail (List.hd row_fields).prf_loc
+        "@tag doesn't apply to polymorphic variants"
+  | Some { tag = None } ->
+      if unboxed then
+        fail (List.hd row_fields).prf_loc
+          "@spice.serde can't be combined with @unboxed";
+      Serde.generate_codecs generator_settings ~tag:None
+        ~legacy:(fun () -> generate_legacy_decoder generator_settings row_fields)
+        (List.map serde_case parsed_fields)
+  | None ->
   let count_has_attr =
     parsed_fields |> List.filter (fun v -> v.has_attr_as) |> List.length
   in

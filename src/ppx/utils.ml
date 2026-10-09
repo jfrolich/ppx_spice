@@ -16,6 +16,11 @@ let mknoloc txt = mkloc txt Location.none
 let lid ?(loc = Location.none) s = mkloc (Longident.parse s) loc
 let make_ident_expr ?attrs s = Exp.ident ?attrs (mknoloc (longident_parse s))
 
+(* The variable a record field's value is bound to in generated code; the
+   prefix keeps field names such as [v] or [dict] from shadowing the
+   generated code's own variables. *)
+let field_var name = "spice_field_" ^ name
+
 let tuple_or_singleton tuple l =
   match List.length l > 1 with true -> tuple l | false -> List.hd l
 
@@ -29,31 +34,6 @@ let get_attribute_by_name attributes name =
   | [ attribute ] -> Ok (Some attribute)
   | _ -> Error ("Too many occurrences of \"" ^ name ^ "\" attribute")
 
-type generator_settings = { do_encode : bool; do_decode : bool }
-
-let make_generator_settings ~do_encode ~do_decode =
-  { do_encode; do_decode }
-
-let get_generator_settings_from_attributes attributes =
-  match get_attribute_by_name attributes annotation_name with
-  | Ok None -> (
-      match
-        ( get_attribute_by_name attributes (annotation_name ^ ".decode"),
-          get_attribute_by_name attributes (annotation_name ^ ".encode") )
-      with
-      | Ok (Some _), Ok (Some _) ->
-          Ok (Some (make_generator_settings ~do_encode:true ~do_decode:true))
-      | Ok (Some _), Ok None ->
-          Ok (Some (make_generator_settings ~do_encode:false ~do_decode:true))
-      | Ok None, Ok (Some _) ->
-          Ok (Some (make_generator_settings ~do_encode:true ~do_decode:false))
-      | Ok None, Ok None -> Ok None
-      | (Error _ as e), _ -> e
-      | _, (Error _ as e) -> e)
-  | Ok (Some _) ->
-      Ok (Some (make_generator_settings ~do_encode:true ~do_decode:true))
-  | Error _ as e -> e
-
 let get_expression_from_payload { attr_name = { loc }; attr_payload = payload }
     =
   match payload with
@@ -62,6 +42,64 @@ let get_expression_from_payload { attr_name = { loc }; attr_payload = payload }
       | Pstr_eval (expr, _) -> expr
       | _ -> fail loc "Expected expression as attribute payload")
   | _ -> fail loc "Expected expression as attribute payload"
+
+(* [@spice.serde]: variants encode the way Rust's serde derive does. Without
+   a tag, externally tagged: [A] is "A", [B(x)] is {"B": x}, [C(x, y)] is
+   {"C": [x, y]} and [D({x})] is {"D": {"x": ...}}. With ReScript's
+   [@tag("type")] on the type, internally tagged like
+   [#[serde(tag = "type")]]: [A] is {"type": "A"} and [D({x})] is
+   {"type": "D", "x": ...}. Decoders also accept the default spice encoding,
+   so values stored before switching a type to serde keep decoding. *)
+type serde = { tag : string option }
+
+type generator_settings = {
+  do_encode : bool;
+  do_decode : bool;
+  serde : serde option;
+}
+
+let make_generator_settings ?serde ~do_encode ~do_decode () =
+  { do_encode; do_decode; serde }
+
+let get_string_payload ({ attr_name = { loc } } as attribute) =
+  match get_expression_from_payload attribute with
+  | { pexp_desc = Pexp_constant (Pconst_string (s, _, _)) } -> s
+  | _ -> fail loc "Expected a string as attribute payload"
+
+let get_serde_from_attributes attributes =
+  match get_attribute_by_name attributes (annotation_name ^ ".serde") with
+  | Ok None -> Ok None
+  | Error _ as e -> e
+  | Ok (Some _) -> (
+      match get_attribute_by_name attributes "tag" with
+      | Ok None -> Ok (Some { tag = None })
+      | Ok (Some attribute) ->
+          Ok (Some { tag = Some (get_string_payload attribute) })
+      | Error _ as e -> e)
+
+let get_generator_settings_from_attributes attributes =
+  match get_serde_from_attributes attributes with
+  | Error _ as e -> e
+  | Ok serde -> (
+      let make ~do_encode ~do_decode =
+        Ok (Some (make_generator_settings ?serde ~do_encode ~do_decode ()))
+      in
+      match get_attribute_by_name attributes annotation_name with
+      | Ok None -> (
+          match
+            ( get_attribute_by_name attributes (annotation_name ^ ".decode"),
+              get_attribute_by_name attributes (annotation_name ^ ".encode") )
+          with
+          | Ok (Some _), Ok (Some _) -> make ~do_encode:true ~do_decode:true
+          | Ok (Some _), Ok None -> make ~do_encode:false ~do_decode:true
+          | Ok None, Ok (Some _) -> make ~do_encode:true ~do_decode:false
+          | Ok None, Ok None ->
+              if Option.is_some serde then make ~do_encode:true ~do_decode:true
+              else Ok None
+          | (Error _ as e), _ -> e
+          | _, (Error _ as e) -> e)
+      | Ok (Some _) -> make ~do_encode:true ~do_decode:true
+      | Error _ as e -> e)
 
 let get_param_names params =
   params

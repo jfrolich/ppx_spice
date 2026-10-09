@@ -167,145 +167,145 @@ function params_decode(v) {
   if (typeof v !== "object" || v === null || Array.isArray(v)) {
     return Spice.error(undefined, "Not an object", v);
   }
-  let width = Stdlib_Option.getOr(Stdlib_Option.map(v["width"], extra => Spice.optionalFieldFromJson(Spice.floatFromJson, extra)), {
+  let spice_field_width = Stdlib_Option.getOr(Stdlib_Option.map(v["width"], extra => Spice.optionalFieldFromJson(Spice.floatFromJson, extra)), {
     TAG: "Ok",
     _0: undefined
   });
-  if (width.TAG === "Ok") {
-    let height = Stdlib_Option.getOr(Stdlib_Option.map(v["height"], extra => Spice.optionalFieldFromJson(Spice.floatFromJson, extra)), {
+  if (spice_field_width.TAG === "Ok") {
+    let spice_field_height = Stdlib_Option.getOr(Stdlib_Option.map(v["height"], extra => Spice.optionalFieldFromJson(Spice.floatFromJson, extra)), {
       TAG: "Ok",
       _0: undefined
     });
-    if (height.TAG === "Ok") {
-      let animation = Stdlib_Option.getOr(Stdlib_Option.map(v["animation"], extra => Spice.optionalFieldFromJson(Spice.boolFromJson, extra)), {
+    if (spice_field_height.TAG === "Ok") {
+      let spice_field_animation = Stdlib_Option.getOr(Stdlib_Option.map(v["animation"], extra => Spice.optionalFieldFromJson(Spice.boolFromJson, extra)), {
         TAG: "Ok",
         _0: undefined
       });
-      if (animation.TAG === "Ok") {
-        let focusInput = Stdlib_Option.getOr(Stdlib_Option.map(v["focusInput"], extra => Spice.optionalFieldFromJson(Spice.boolFromJson, extra)), {
+      if (spice_field_animation.TAG === "Ok") {
+        let spice_field_focusInput = Stdlib_Option.getOr(Stdlib_Option.map(v["focusInput"], extra => Spice.optionalFieldFromJson(Spice.boolFromJson, extra)), {
           TAG: "Ok",
           _0: undefined
         });
-        if (focusInput.TAG === "Ok") {
-          let autoMapping = Stdlib_Option.getOr(Stdlib_Option.map(v["autoMapping"], extra => Spice.optionalFieldFromJson(Spice.boolFromJson, extra)), {
+        if (spice_field_focusInput.TAG === "Ok") {
+          let spice_field_autoMapping = Stdlib_Option.getOr(Stdlib_Option.map(v["autoMapping"], extra => Spice.optionalFieldFromJson(Spice.boolFromJson, extra)), {
             TAG: "Ok",
             _0: undefined
           });
-          if (autoMapping.TAG === "Ok") {
-            let shorthand = Stdlib_Option.getOr(Stdlib_Option.map(v["shorthand"], extra => Spice.optionalFieldFromJson(Spice.boolFromJson, extra)), {
+          if (spice_field_autoMapping.TAG === "Ok") {
+            let spice_field_shorthand = Stdlib_Option.getOr(Stdlib_Option.map(v["shorthand"], extra => Spice.optionalFieldFromJson(Spice.boolFromJson, extra)), {
               TAG: "Ok",
               _0: undefined
             });
-            if (shorthand.TAG === "Ok") {
-              let pleaseReadGuide = Stdlib_Option.getOr(Stdlib_Option.map(v["pleaseReadGuide"], extra => Spice.optionalFieldFromJson(Spice.intFromJson, extra)), {
+            if (spice_field_shorthand.TAG === "Ok") {
+              let spice_field_pleaseReadGuide = Stdlib_Option.getOr(Stdlib_Option.map(v["pleaseReadGuide"], extra => Spice.optionalFieldFromJson(Spice.intFromJson, extra)), {
                 TAG: "Ok",
                 _0: undefined
               });
-              if (pleaseReadGuide.TAG === "Ok") {
-                let pleaseReadGuideTimer = Stdlib_Option.getOr(Stdlib_Option.map(v["pleaseReadGuideTimer"], extra => Spice.optionalFieldFromJson(Spice.floatFromJson, extra)), {
+              if (spice_field_pleaseReadGuide.TAG === "Ok") {
+                let spice_field_pleaseReadGuideTimer = Stdlib_Option.getOr(Stdlib_Option.map(v["pleaseReadGuideTimer"], extra => Spice.optionalFieldFromJson(Spice.floatFromJson, extra)), {
                   TAG: "Ok",
                   _0: undefined
                 });
-                if (pleaseReadGuideTimer.TAG === "Ok") {
-                  let maxSuggestItems = Stdlib_Option.getOr(Stdlib_Option.map(v["maxSuggestItems"], extra => Spice.optionalFieldFromJson(Spice.intFromJson, extra)), {
+                if (spice_field_pleaseReadGuideTimer.TAG === "Ok") {
+                  let spice_field_maxSuggestItems = Stdlib_Option.getOr(Stdlib_Option.map(v["maxSuggestItems"], extra => Spice.optionalFieldFromJson(Spice.intFromJson, extra)), {
                     TAG: "Ok",
                     _0: undefined
                   });
-                  if (maxSuggestItems.TAG === "Ok") {
-                    let showMoreHName = Stdlib_Option.getOr(Stdlib_Option.map(v["showMoreHName"], extra => Spice.optionalFieldFromJson(Spice.boolFromJson, extra)), {
+                  if (spice_field_maxSuggestItems.TAG === "Ok") {
+                    let spice_field_showMoreHName = Stdlib_Option.getOr(Stdlib_Option.map(v["showMoreHName"], extra => Spice.optionalFieldFromJson(Spice.boolFromJson, extra)), {
                       TAG: "Ok",
                       _0: undefined
                     });
-                    if (showMoreHName.TAG === "Ok") {
-                      let hideMapBtn = Stdlib_Option.getOr(Stdlib_Option.map(v["hideMapBtn"], extra => Spice.optionalFieldFromJson(Spice.boolFromJson, extra)), {
+                    if (spice_field_showMoreHName.TAG === "Ok") {
+                      let spice_field_hideMapBtn = Stdlib_Option.getOr(Stdlib_Option.map(v["hideMapBtn"], extra => Spice.optionalFieldFromJson(Spice.boolFromJson, extra)), {
                         TAG: "Ok",
                         _0: undefined
                       });
-                      if (hideMapBtn.TAG === "Ok") {
-                        let hideEngBtn = Stdlib_Option.getOr(Stdlib_Option.map(v["hideEngBtn"], extra => Spice.optionalFieldFromJson(Spice.boolFromJson, extra)), {
+                      if (spice_field_hideMapBtn.TAG === "Ok") {
+                        let spice_field_hideEngBtn = Stdlib_Option.getOr(Stdlib_Option.map(v["hideEngBtn"], extra => Spice.optionalFieldFromJson(Spice.boolFromJson, extra)), {
                           TAG: "Ok",
                           _0: undefined
                         });
-                        if (hideEngBtn.TAG === "Ok") {
-                          let alwaysShowEngAddr = Stdlib_Option.getOr(Stdlib_Option.map(v["alwaysShowEngAddr"], extra => Spice.optionalFieldFromJson(Spice.boolFromJson, extra)), {
+                        if (spice_field_hideEngBtn.TAG === "Ok") {
+                          let spice_field_alwaysShowEngAddr = Stdlib_Option.getOr(Stdlib_Option.map(v["alwaysShowEngAddr"], extra => Spice.optionalFieldFromJson(Spice.boolFromJson, extra)), {
                             TAG: "Ok",
                             _0: undefined
                           });
-                          if (alwaysShowEngAddr.TAG === "Ok") {
-                            let useBannerLink = Stdlib_Option.getOr(Stdlib_Option.map(v["useBannerLink"], extra => Spice.optionalFieldFromJson(Spice.boolFromJson, extra)), {
+                          if (spice_field_alwaysShowEngAddr.TAG === "Ok") {
+                            let spice_field_useBannerLink = Stdlib_Option.getOr(Stdlib_Option.map(v["useBannerLink"], extra => Spice.optionalFieldFromJson(Spice.boolFromJson, extra)), {
                               TAG: "Ok",
                               _0: undefined
                             });
-                            if (useBannerLink.TAG === "Ok") {
-                              let submitMode = Stdlib_Option.getOr(Stdlib_Option.map(v["submitMode"], extra => Spice.optionalFieldFromJson(Spice.boolFromJson, extra)), {
+                            if (spice_field_useBannerLink.TAG === "Ok") {
+                              let spice_field_submitMode = Stdlib_Option.getOr(Stdlib_Option.map(v["submitMode"], extra => Spice.optionalFieldFromJson(Spice.boolFromJson, extra)), {
                                 TAG: "Ok",
                                 _0: undefined
                               });
-                              if (submitMode.TAG === "Ok") {
+                              if (spice_field_submitMode.TAG === "Ok") {
                                 return {
                                   TAG: "Ok",
                                   _0: {
-                                    width: width._0,
-                                    height: height._0,
-                                    animation: animation._0,
-                                    focusInput: focusInput._0,
-                                    autoMapping: autoMapping._0,
-                                    shorthand: shorthand._0,
-                                    pleaseReadGuide: pleaseReadGuide._0,
-                                    pleaseReadGuideTimer: pleaseReadGuideTimer._0,
-                                    maxSuggestItems: maxSuggestItems._0,
-                                    showMoreHName: showMoreHName._0,
-                                    hideMapBtn: hideMapBtn._0,
-                                    hideEngBtn: hideEngBtn._0,
-                                    alwaysShowEngAddr: alwaysShowEngAddr._0,
-                                    useBannerLink: useBannerLink._0,
-                                    submitMode: submitMode._0
+                                    width: spice_field_width._0,
+                                    height: spice_field_height._0,
+                                    animation: spice_field_animation._0,
+                                    focusInput: spice_field_focusInput._0,
+                                    autoMapping: spice_field_autoMapping._0,
+                                    shorthand: spice_field_shorthand._0,
+                                    pleaseReadGuide: spice_field_pleaseReadGuide._0,
+                                    pleaseReadGuideTimer: spice_field_pleaseReadGuideTimer._0,
+                                    maxSuggestItems: spice_field_maxSuggestItems._0,
+                                    showMoreHName: spice_field_showMoreHName._0,
+                                    hideMapBtn: spice_field_hideMapBtn._0,
+                                    hideEngBtn: spice_field_hideEngBtn._0,
+                                    alwaysShowEngAddr: spice_field_alwaysShowEngAddr._0,
+                                    useBannerLink: spice_field_useBannerLink._0,
+                                    submitMode: spice_field_submitMode._0
                                   }
                                 };
                               }
-                              let e = submitMode._0;
+                              let e = spice_field_submitMode._0;
                               return Spice.error("." + ("submitMode" + e.path), e.message, e.value);
                             }
-                            let e$1 = useBannerLink._0;
+                            let e$1 = spice_field_useBannerLink._0;
                             return Spice.error("." + ("useBannerLink" + e$1.path), e$1.message, e$1.value);
                           }
-                          let e$2 = alwaysShowEngAddr._0;
+                          let e$2 = spice_field_alwaysShowEngAddr._0;
                           return Spice.error("." + ("alwaysShowEngAddr" + e$2.path), e$2.message, e$2.value);
                         }
-                        let e$3 = hideEngBtn._0;
+                        let e$3 = spice_field_hideEngBtn._0;
                         return Spice.error("." + ("hideEngBtn" + e$3.path), e$3.message, e$3.value);
                       }
-                      let e$4 = hideMapBtn._0;
+                      let e$4 = spice_field_hideMapBtn._0;
                       return Spice.error("." + ("hideMapBtn" + e$4.path), e$4.message, e$4.value);
                     }
-                    let e$5 = showMoreHName._0;
+                    let e$5 = spice_field_showMoreHName._0;
                     return Spice.error("." + ("showMoreHName" + e$5.path), e$5.message, e$5.value);
                   }
-                  let e$6 = maxSuggestItems._0;
+                  let e$6 = spice_field_maxSuggestItems._0;
                   return Spice.error("." + ("maxSuggestItems" + e$6.path), e$6.message, e$6.value);
                 }
-                let e$7 = pleaseReadGuideTimer._0;
+                let e$7 = spice_field_pleaseReadGuideTimer._0;
                 return Spice.error("." + ("pleaseReadGuideTimer" + e$7.path), e$7.message, e$7.value);
               }
-              let e$8 = pleaseReadGuide._0;
+              let e$8 = spice_field_pleaseReadGuide._0;
               return Spice.error("." + ("pleaseReadGuide" + e$8.path), e$8.message, e$8.value);
             }
-            let e$9 = shorthand._0;
+            let e$9 = spice_field_shorthand._0;
             return Spice.error("." + ("shorthand" + e$9.path), e$9.message, e$9.value);
           }
-          let e$10 = autoMapping._0;
+          let e$10 = spice_field_autoMapping._0;
           return Spice.error("." + ("autoMapping" + e$10.path), e$10.message, e$10.value);
         }
-        let e$11 = focusInput._0;
+        let e$11 = spice_field_focusInput._0;
         return Spice.error("." + ("focusInput" + e$11.path), e$11.message, e$11.value);
       }
-      let e$12 = animation._0;
+      let e$12 = spice_field_animation._0;
       return Spice.error("." + ("animation" + e$12.path), e$12.message, e$12.value);
     }
-    let e$13 = height._0;
+    let e$13 = spice_field_height._0;
     return Spice.error("." + ("height" + e$13.path), e$13.message, e$13.value);
   }
-  let e$14 = width._0;
+  let e$14 = spice_field_width._0;
   return Spice.error("." + ("width" + e$14.path), e$14.message, e$14.value);
 }
 
