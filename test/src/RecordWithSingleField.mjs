@@ -21,16 +21,16 @@ function t_decode(v) {
   if (typeof v !== "object" || v === null || Array.isArray(v)) {
     return Spice.error(undefined, "Not an object", v);
   }
-  let a = Stdlib_Option.getOr(Stdlib_Option.map(v["a"], Spice.stringFromJson), Spice.error(undefined, "a" + " missing", v));
-  if (a.TAG === "Ok") {
+  let spice_field_a = Stdlib_Option.getOr(Stdlib_Option.map(v["a"], Spice.stringFromJson), Spice.error(undefined, "a" + " missing", v));
+  if (spice_field_a.TAG === "Ok") {
     return {
       TAG: "Ok",
       _0: {
-        a: a._0
+        a: spice_field_a._0
       }
     };
   }
-  let e = a._0;
+  let e = spice_field_a._0;
   return Spice.error("." + ("a" + e.path), e.message, e.value);
 }
 
@@ -74,31 +74,31 @@ function response_decode(v) {
   if (typeof v !== "object" || v === null || Array.isArray(v)) {
     return Spice.error(undefined, "Not an object", v);
   }
-  let data = Stdlib_Option.getOr(Stdlib_Option.map(v["data"], extra => Spice.optionalFieldFromJson(v => ({
+  let spice_field_data = Stdlib_Option.getOr(Stdlib_Option.map(v["data"], extra => Spice.optionalFieldFromJson(v => ({
     TAG: "Ok",
     _0: v
   }), extra)), {
     TAG: "Ok",
     _0: undefined
   });
-  if (data.TAG === "Ok") {
-    let errors = Stdlib_Option.getOr(Stdlib_Option.map(v["errors"], extra => Spice.optionalFieldFromJson(extra => Spice.arrayFromJson(t_decode, extra), extra)), {
+  if (spice_field_data.TAG === "Ok") {
+    let spice_field_errors = Stdlib_Option.getOr(Stdlib_Option.map(v["errors"], extra => Spice.optionalFieldFromJson(extra => Spice.arrayFromJson(t_decode, extra), extra)), {
       TAG: "Ok",
       _0: undefined
     });
-    if (errors.TAG === "Ok") {
+    if (spice_field_errors.TAG === "Ok") {
       return {
         TAG: "Ok",
         _0: {
-          data: data._0,
-          errors: errors._0
+          data: spice_field_data._0,
+          errors: spice_field_errors._0
         }
       };
     }
-    let e = errors._0;
+    let e = spice_field_errors._0;
     return Spice.error("." + ("errors" + e.path), e.message, e.value);
   }
-  let e$1 = data._0;
+  let e$1 = spice_field_data._0;
   return Spice.error("." + ("data" + e$1.path), e$1.message, e$1.value);
 }
 

@@ -430,6 +430,10 @@ function taggedObject(tag, name, json) {
   return Stdlib_JsError.throwWithMessage(`Can't encode ` + name + ` with tag "` + tag + `": its payload doesn't encode to an object`);
 }
 
+function untagged(tag, dict) {
+  return Object.fromEntries(Object.entries(dict).filter(param => param[0] !== tag));
+}
+
 let string = [
   stringToJson,
   stringFromJson
@@ -524,6 +528,7 @@ export {
   dictOptionalToJson,
   dictFromJson,
   taggedObject,
+  untagged,
   Codecs,
 }
 /* No side effect */

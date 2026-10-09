@@ -16,6 +16,11 @@ let mknoloc txt = mkloc txt Location.none
 let lid ?(loc = Location.none) s = mkloc (Longident.parse s) loc
 let make_ident_expr ?attrs s = Exp.ident ?attrs (mknoloc (longident_parse s))
 
+(* The variable a record field's value is bound to in generated code; the
+   prefix keeps field names such as [v] or [dict] from shadowing the
+   generated code's own variables. *)
+let field_var name = "spice_field_" ^ name
+
 let tuple_or_singleton tuple l =
   match List.length l > 1 with true -> tuple l | false -> List.hd l
 

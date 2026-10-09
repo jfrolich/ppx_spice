@@ -48,7 +48,18 @@ let json_object entries =
     [%expr JSON.Object (Dict.fromArray [%e Exp.array entries])]
     ctyp_json_t
 
+let validate_names cases =
+  let rec check seen = function
+    | [] -> ()
+    | { name; loc } :: rest ->
+        if List.mem name seen then
+          fail loc ("Two constructors are both named " ^ name ^ " in JSON")
+        else check (name :: seen) rest
+  in
+  check [] cases
+
 let validate ~tag cases =
+  validate_names cases;
   match tag with
   | None -> ()
   | Some tag ->
@@ -206,7 +217,13 @@ let generate_decoder generator_settings ~tag ~legacy cases =
           |> List.filter_map (fun ({ name; constructor; payload } as case) ->
                  let decoded =
                    match payload with
-                   | Unit -> None
+                   | Unit ->
+                       (* serde also reads a unit variant written as a map. *)
+                       Some
+                         [%expr
+                           match payload with
+                           | JSON.Null -> Ok [%e case.construct None]
+                           | _ -> Spice.error "Expected null" payload]
                    | Args args -> Some (decode_args generator_settings case args)
                    | Record fields ->
                        Some
@@ -242,7 +259,7 @@ let generate_decoder generator_settings ~tag ~legacy cases =
                      Some
                        ( name,
                          [%expr
-                           let payload = v in
+                           let payload = Spice.untagged [%e str tag] dict in
                            [%e decode_args generator_settings case args]] )
                  | Unit -> None)
         in
@@ -256,6 +273,8 @@ let generate_decoder generator_settings ~tag ~legacy cases =
     [%expr
       fun v ->
         match (v : JSON.t) with
+        (* First: JSON.Object alone would also match null here. *)
+        | JSON.Null -> Spice.error "Not a variant" v
         | JSON.String spice_tag -> [%e decode_by_name units ~otherwise:invalid]
         | JSON.Object dict -> [%e object_decoder]
         | JSON.Array [||] -> Spice.error "Expected variant, found empty array" v

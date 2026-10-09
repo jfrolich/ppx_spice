@@ -54,7 +54,7 @@ let generate_record_expr decls =
       (fun d ->
         let { name; is_optional } = d in
         let attrs = if is_optional then [ Utils.attr_optional ] else [] in
-        (lid name, make_ident_expr ~attrs name))
+        (lid name, make_ident_expr ~attrs (field_var name)))
       decls
   in
   Exp.record record_fields None
@@ -96,7 +96,7 @@ let generate_nested_decoder ?ok_expr decls =
       | d :: rest ->
           let { name; key; _ } = d in
           let decode_expr = generate_decode_expr d in
-          let var_pat = Pat.var (mknoloc name) in
+          let var_pat = Pat.var (mknoloc (field_var name)) in
           let ok_case =
             Exp.case
               (Pat.construct (mknoloc (Longident.Lident "Ok")) (Some var_pat))
@@ -218,7 +218,9 @@ let parse_decl ?field generator_settings
   }
 
 let parse_inline_decl generator_settings decl =
-  parse_decl ~field:(fun name -> make_ident_expr name) generator_settings decl
+  parse_decl
+    ~field:(fun name -> make_ident_expr (field_var name))
+    generator_settings decl
 
 let generate_inline_record_encoder_expr ?(leading_entries = [])
     generator_settings decls =

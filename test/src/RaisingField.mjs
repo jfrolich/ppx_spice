@@ -65,28 +65,28 @@ function t_decode$1(v) {
   if (typeof v !== "object" || v === null || Array.isArray(v)) {
     return Spice.error(undefined, "Not an object", v);
   }
-  let label = Stdlib_Option.getOr(Stdlib_Option.map(v["label"], extra => Spice.optionalFieldFromJson(t_decode, extra)), {
+  let spice_field_label = Stdlib_Option.getOr(Stdlib_Option.map(v["label"], extra => Spice.optionalFieldFromJson(t_decode, extra)), {
     TAG: "Ok",
     _0: undefined
   });
-  if (label.TAG === "Ok") {
-    let value = Stdlib_Option.getOr(Stdlib_Option.map(v["value"], extra => Spice.optionalFieldFromJson(t_decode, extra)), {
+  if (spice_field_label.TAG === "Ok") {
+    let spice_field_value = Stdlib_Option.getOr(Stdlib_Option.map(v["value"], extra => Spice.optionalFieldFromJson(t_decode, extra)), {
       TAG: "Ok",
       _0: undefined
     });
-    if (value.TAG === "Ok") {
+    if (spice_field_value.TAG === "Ok") {
       return {
         TAG: "Ok",
         _0: {
-          label: label._0,
-          value: value._0
+          label: spice_field_label._0,
+          value: spice_field_value._0
         }
       };
     }
-    let e = value._0;
+    let e = spice_field_value._0;
     return Spice.error("." + ("value" + e.path), e.message, e.value);
   }
-  let e$1 = label._0;
+  let e$1 = spice_field_label._0;
   return Spice.error("." + ("label" + e$1.path), e$1.message, e$1.value);
 }
 

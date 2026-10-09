@@ -228,6 +228,10 @@ let taggedObject = (tag, name, json: JSON.t): JSON.t =>
     )
   }
 
+// The object of an internally tagged single-value payload, without its tag.
+let untagged = (tag, dict: dict<JSON.t>): JSON.t =>
+  JSON.Object(dict->Dict.toArray->Array.filter(((key, _)) => key != tag)->Dict.fromArray)
+
 module Codecs = {
   include Spice_Codecs
   let string = (stringToJson, stringFromJson)

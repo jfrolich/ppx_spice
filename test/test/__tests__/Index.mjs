@@ -7,7 +7,10 @@ import * as Tuples_test from "./spec/tuples_test.mjs";
 import * as Records_test from "./spec/records_test.mjs";
 import * as Results_test from "./spec/results_test.mjs";
 import * as Variants_test from "./spec/variants_test.mjs";
+import * as Serde_edge_test from "./spec/serde_edge_test.mjs";
+import * as Serde_rust_test from "./spec/serde_rust_test.mjs";
 import * as Polyvariants_test from "./spec/polyvariants_test.mjs";
+import * as Serde_random_test from "./spec/serde_random_test.mjs";
 import * as Encode_decode_test from "./spec/encode_decode_test.mjs";
 import * as Raising_field_test from "./spec/raising_field_test.mjs";
 import * as Top_level_options_test from "./spec/top_level_options_test.mjs";
@@ -38,11 +41,33 @@ let nestedTupleJson = Top_level_options_test.nestedTupleJson;
 
 let payloadVariantJson = Top_level_options_test.payloadVariantJson;
 
-let testEqual = Serde_test.testEqual;
-
-let json = Serde_test.json;
-
 let isError = Serde_test.isError;
+
+let golden = Serde_rust_test.golden;
+
+let used = Serde_rust_test.used;
+
+let testEqual = Serde_edge_test.testEqual;
+
+let json = Serde_edge_test.json;
+
+let errorAt = Serde_edge_test.errorAt;
+
+let roundTrips = Serde_edge_test.roundTrips;
+
+let seed = Serde_random_test.seed;
+
+let next = Serde_random_test.next;
+
+let int = Serde_random_test.int;
+
+let string = Serde_random_test.string;
+
+let ext = Serde_random_test.ext;
+
+let tree = Serde_random_test.tree;
+
+let check = Serde_random_test.check;
 
 export {
   dataObject,
@@ -57,8 +82,19 @@ export {
   nestedTuple,
   nestedTupleJson,
   payloadVariantJson,
+  isError,
+  golden,
+  used,
   testEqual,
   json,
-  isError,
+  errorAt,
+  roundTrips,
+  seed,
+  next,
+  int,
+  string,
+  ext,
+  tree,
+  check,
 }
 /* Dicts_test Not a pure module */

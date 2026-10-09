@@ -253,9 +253,12 @@ let generate_codecs ({ do_encode; do_decode } as generator_settings) row_fields
   let parsed_fields = List.map parse_decl row_fields in
   match generator_settings.serde with
   | Some { tag = Some _ } ->
-      failwith "@tag doesn't apply to polymorphic variants"
+      fail (List.hd row_fields).prf_loc
+        "@tag doesn't apply to polymorphic variants"
   | Some { tag = None } ->
-      if unboxed then failwith "@spice.serde can't be combined with @unboxed";
+      if unboxed then
+        fail (List.hd row_fields).prf_loc
+          "@spice.serde can't be combined with @unboxed";
       Serde.generate_codecs generator_settings ~tag:None
         ~legacy:(fun () -> generate_legacy_decoder generator_settings row_fields)
         (List.map serde_case parsed_fields)

@@ -217,190 +217,190 @@ function t_decode(v) {
   if (typeof v !== "object" || v === null || Array.isArray(v)) {
     return Spice.error(undefined, "Not an object", v);
   }
-  let f1 = Stdlib_Option.getOr(Stdlib_Option.map(v["f1"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+  let spice_field_f1 = Stdlib_Option.getOr(Stdlib_Option.map(v["f1"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
     TAG: "Ok",
     _0: undefined
   });
-  if (f1.TAG === "Ok") {
-    let f2 = Stdlib_Option.getOr(Stdlib_Option.map(v["f2"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+  if (spice_field_f1.TAG === "Ok") {
+    let spice_field_f2 = Stdlib_Option.getOr(Stdlib_Option.map(v["f2"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
       TAG: "Ok",
       _0: undefined
     });
-    if (f2.TAG === "Ok") {
-      let f3 = Stdlib_Option.getOr(Stdlib_Option.map(v["f3"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+    if (spice_field_f2.TAG === "Ok") {
+      let spice_field_f3 = Stdlib_Option.getOr(Stdlib_Option.map(v["f3"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
         TAG: "Ok",
         _0: undefined
       });
-      if (f3.TAG === "Ok") {
-        let f4 = Stdlib_Option.getOr(Stdlib_Option.map(v["f4"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+      if (spice_field_f3.TAG === "Ok") {
+        let spice_field_f4 = Stdlib_Option.getOr(Stdlib_Option.map(v["f4"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
           TAG: "Ok",
           _0: undefined
         });
-        if (f4.TAG === "Ok") {
-          let f5 = Stdlib_Option.getOr(Stdlib_Option.map(v["f5"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+        if (spice_field_f4.TAG === "Ok") {
+          let spice_field_f5 = Stdlib_Option.getOr(Stdlib_Option.map(v["f5"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
             TAG: "Ok",
             _0: undefined
           });
-          if (f5.TAG === "Ok") {
-            let f6 = Stdlib_Option.getOr(Stdlib_Option.map(v["f6"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+          if (spice_field_f5.TAG === "Ok") {
+            let spice_field_f6 = Stdlib_Option.getOr(Stdlib_Option.map(v["f6"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
               TAG: "Ok",
               _0: undefined
             });
-            if (f6.TAG === "Ok") {
-              let f7 = Stdlib_Option.getOr(Stdlib_Option.map(v["f7"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+            if (spice_field_f6.TAG === "Ok") {
+              let spice_field_f7 = Stdlib_Option.getOr(Stdlib_Option.map(v["f7"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                 TAG: "Ok",
                 _0: undefined
               });
-              if (f7.TAG === "Ok") {
-                let f8 = Stdlib_Option.getOr(Stdlib_Option.map(v["f8"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+              if (spice_field_f7.TAG === "Ok") {
+                let spice_field_f8 = Stdlib_Option.getOr(Stdlib_Option.map(v["f8"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                   TAG: "Ok",
                   _0: undefined
                 });
-                if (f8.TAG === "Ok") {
-                  let f9 = Stdlib_Option.getOr(Stdlib_Option.map(v["f9"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+                if (spice_field_f8.TAG === "Ok") {
+                  let spice_field_f9 = Stdlib_Option.getOr(Stdlib_Option.map(v["f9"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                     TAG: "Ok",
                     _0: undefined
                   });
-                  if (f9.TAG === "Ok") {
-                    let f10 = Stdlib_Option.getOr(Stdlib_Option.map(v["f10"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+                  if (spice_field_f9.TAG === "Ok") {
+                    let spice_field_f10 = Stdlib_Option.getOr(Stdlib_Option.map(v["f10"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                       TAG: "Ok",
                       _0: undefined
                     });
-                    if (f10.TAG === "Ok") {
-                      let f11 = Stdlib_Option.getOr(Stdlib_Option.map(v["f11"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+                    if (spice_field_f10.TAG === "Ok") {
+                      let spice_field_f11 = Stdlib_Option.getOr(Stdlib_Option.map(v["f11"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                         TAG: "Ok",
                         _0: undefined
                       });
-                      if (f11.TAG === "Ok") {
-                        let f12 = Stdlib_Option.getOr(Stdlib_Option.map(v["f12"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+                      if (spice_field_f11.TAG === "Ok") {
+                        let spice_field_f12 = Stdlib_Option.getOr(Stdlib_Option.map(v["f12"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                           TAG: "Ok",
                           _0: undefined
                         });
-                        if (f12.TAG === "Ok") {
-                          let f13 = Stdlib_Option.getOr(Stdlib_Option.map(v["f13"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+                        if (spice_field_f12.TAG === "Ok") {
+                          let spice_field_f13 = Stdlib_Option.getOr(Stdlib_Option.map(v["f13"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                             TAG: "Ok",
                             _0: undefined
                           });
-                          if (f13.TAG === "Ok") {
-                            let f14 = Stdlib_Option.getOr(Stdlib_Option.map(v["f14"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+                          if (spice_field_f13.TAG === "Ok") {
+                            let spice_field_f14 = Stdlib_Option.getOr(Stdlib_Option.map(v["f14"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                               TAG: "Ok",
                               _0: undefined
                             });
-                            if (f14.TAG === "Ok") {
-                              let f15 = Stdlib_Option.getOr(Stdlib_Option.map(v["f15"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+                            if (spice_field_f14.TAG === "Ok") {
+                              let spice_field_f15 = Stdlib_Option.getOr(Stdlib_Option.map(v["f15"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                                 TAG: "Ok",
                                 _0: undefined
                               });
-                              if (f15.TAG === "Ok") {
-                                let f16 = Stdlib_Option.getOr(Stdlib_Option.map(v["f16"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+                              if (spice_field_f15.TAG === "Ok") {
+                                let spice_field_f16 = Stdlib_Option.getOr(Stdlib_Option.map(v["f16"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                                   TAG: "Ok",
                                   _0: undefined
                                 });
-                                if (f16.TAG === "Ok") {
-                                  let f17 = Stdlib_Option.getOr(Stdlib_Option.map(v["f17"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+                                if (spice_field_f16.TAG === "Ok") {
+                                  let spice_field_f17 = Stdlib_Option.getOr(Stdlib_Option.map(v["f17"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                                     TAG: "Ok",
                                     _0: undefined
                                   });
-                                  if (f17.TAG === "Ok") {
-                                    let f18 = Stdlib_Option.getOr(Stdlib_Option.map(v["f18"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+                                  if (spice_field_f17.TAG === "Ok") {
+                                    let spice_field_f18 = Stdlib_Option.getOr(Stdlib_Option.map(v["f18"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                                       TAG: "Ok",
                                       _0: undefined
                                     });
-                                    if (f18.TAG === "Ok") {
-                                      let f19 = Stdlib_Option.getOr(Stdlib_Option.map(v["f19"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+                                    if (spice_field_f18.TAG === "Ok") {
+                                      let spice_field_f19 = Stdlib_Option.getOr(Stdlib_Option.map(v["f19"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                                         TAG: "Ok",
                                         _0: undefined
                                       });
-                                      if (f19.TAG === "Ok") {
-                                        let f20 = Stdlib_Option.getOr(Stdlib_Option.map(v["f20"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
+                                      if (spice_field_f19.TAG === "Ok") {
+                                        let spice_field_f20 = Stdlib_Option.getOr(Stdlib_Option.map(v["f20"], extra => Spice.optionalFieldFromJson(Spice.stringFromJson, extra)), {
                                           TAG: "Ok",
                                           _0: undefined
                                         });
-                                        if (f20.TAG === "Ok") {
+                                        if (spice_field_f20.TAG === "Ok") {
                                           return {
                                             TAG: "Ok",
                                             _0: {
-                                              f1: f1._0,
-                                              f2: f2._0,
-                                              f3: f3._0,
-                                              f4: f4._0,
-                                              f5: f5._0,
-                                              f6: f6._0,
-                                              f7: f7._0,
-                                              f8: f8._0,
-                                              f9: f9._0,
-                                              f10: f10._0,
-                                              f11: f11._0,
-                                              f12: f12._0,
-                                              f13: f13._0,
-                                              f14: f14._0,
-                                              f15: f15._0,
-                                              f16: f16._0,
-                                              f17: f17._0,
-                                              f18: f18._0,
-                                              f19: f19._0,
-                                              f20: f20._0
+                                              f1: spice_field_f1._0,
+                                              f2: spice_field_f2._0,
+                                              f3: spice_field_f3._0,
+                                              f4: spice_field_f4._0,
+                                              f5: spice_field_f5._0,
+                                              f6: spice_field_f6._0,
+                                              f7: spice_field_f7._0,
+                                              f8: spice_field_f8._0,
+                                              f9: spice_field_f9._0,
+                                              f10: spice_field_f10._0,
+                                              f11: spice_field_f11._0,
+                                              f12: spice_field_f12._0,
+                                              f13: spice_field_f13._0,
+                                              f14: spice_field_f14._0,
+                                              f15: spice_field_f15._0,
+                                              f16: spice_field_f16._0,
+                                              f17: spice_field_f17._0,
+                                              f18: spice_field_f18._0,
+                                              f19: spice_field_f19._0,
+                                              f20: spice_field_f20._0
                                             }
                                           };
                                         }
-                                        let e = f20._0;
+                                        let e = spice_field_f20._0;
                                         return Spice.error("." + ("f20" + e.path), e.message, e.value);
                                       }
-                                      let e$1 = f19._0;
+                                      let e$1 = spice_field_f19._0;
                                       return Spice.error("." + ("f19" + e$1.path), e$1.message, e$1.value);
                                     }
-                                    let e$2 = f18._0;
+                                    let e$2 = spice_field_f18._0;
                                     return Spice.error("." + ("f18" + e$2.path), e$2.message, e$2.value);
                                   }
-                                  let e$3 = f17._0;
+                                  let e$3 = spice_field_f17._0;
                                   return Spice.error("." + ("f17" + e$3.path), e$3.message, e$3.value);
                                 }
-                                let e$4 = f16._0;
+                                let e$4 = spice_field_f16._0;
                                 return Spice.error("." + ("f16" + e$4.path), e$4.message, e$4.value);
                               }
-                              let e$5 = f15._0;
+                              let e$5 = spice_field_f15._0;
                               return Spice.error("." + ("f15" + e$5.path), e$5.message, e$5.value);
                             }
-                            let e$6 = f14._0;
+                            let e$6 = spice_field_f14._0;
                             return Spice.error("." + ("f14" + e$6.path), e$6.message, e$6.value);
                           }
-                          let e$7 = f13._0;
+                          let e$7 = spice_field_f13._0;
                           return Spice.error("." + ("f13" + e$7.path), e$7.message, e$7.value);
                         }
-                        let e$8 = f12._0;
+                        let e$8 = spice_field_f12._0;
                         return Spice.error("." + ("f12" + e$8.path), e$8.message, e$8.value);
                       }
-                      let e$9 = f11._0;
+                      let e$9 = spice_field_f11._0;
                       return Spice.error("." + ("f11" + e$9.path), e$9.message, e$9.value);
                     }
-                    let e$10 = f10._0;
+                    let e$10 = spice_field_f10._0;
                     return Spice.error("." + ("f10" + e$10.path), e$10.message, e$10.value);
                   }
-                  let e$11 = f9._0;
+                  let e$11 = spice_field_f9._0;
                   return Spice.error("." + ("f9" + e$11.path), e$11.message, e$11.value);
                 }
-                let e$12 = f8._0;
+                let e$12 = spice_field_f8._0;
                 return Spice.error("." + ("f8" + e$12.path), e$12.message, e$12.value);
               }
-              let e$13 = f7._0;
+              let e$13 = spice_field_f7._0;
               return Spice.error("." + ("f7" + e$13.path), e$13.message, e$13.value);
             }
-            let e$14 = f6._0;
+            let e$14 = spice_field_f6._0;
             return Spice.error("." + ("f6" + e$14.path), e$14.message, e$14.value);
           }
-          let e$15 = f5._0;
+          let e$15 = spice_field_f5._0;
           return Spice.error("." + ("f5" + e$15.path), e$15.message, e$15.value);
         }
-        let e$16 = f4._0;
+        let e$16 = spice_field_f4._0;
         return Spice.error("." + ("f4" + e$16.path), e$16.message, e$16.value);
       }
-      let e$17 = f3._0;
+      let e$17 = spice_field_f3._0;
       return Spice.error("." + ("f3" + e$17.path), e$17.message, e$17.value);
     }
-    let e$18 = f2._0;
+    let e$18 = spice_field_f2._0;
     return Spice.error("." + ("f2" + e$18.path), e$18.message, e$18.value);
   }
-  let e$19 = f1._0;
+  let e$19 = spice_field_f1._0;
   return Spice.error("." + ("f1" + e$19.path), e$19.message, e$19.value);
 }
 

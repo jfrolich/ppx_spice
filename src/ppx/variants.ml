@@ -32,7 +32,7 @@ let generate_inline_record_payload_pattern fields =
          let attrs =
            if is_optional_field field then [ Utils.attr_optional ] else []
          in
-         (lid txt, Pat.var ~loc ~attrs (mkloc txt loc)))
+         (lid txt, Pat.var ~loc ~attrs (mkloc (field_var txt) loc)))
   |> fun fields -> Pat.record fields Asttypes.Closed
 
 let prefix_payload_decode_error expr =
@@ -324,7 +324,9 @@ let generate_codecs ({ do_encode; do_decode } as generator_settings)
   let parsed_decls = List.map (parse_decl generator_settings) constr_decls in
   match generator_settings.serde with
   | Some { tag } ->
-      if unboxed then failwith "@spice.serde can't be combined with @unboxed";
+      if unboxed then
+        fail (List.hd constr_decls).pcd_loc
+          "@spice.serde can't be combined with @unboxed";
       Serde.generate_codecs generator_settings ~tag
         ~legacy:(fun () -> generate_legacy_decoder generator_settings constr_decls)
         (List.map serde_case parsed_decls)

@@ -22,16 +22,16 @@ function dataObject_decode(decoder_data) {
     if (typeof v !== "object" || v === null || Array.isArray(v)) {
       return Spice.error(undefined, "Not an object", v);
     }
-    let properties = Stdlib_Option.getOr(Stdlib_Option.map(v["properties"], extra => Spice.arrayFromJson(decoder_data, extra)), Spice.error(undefined, "properties" + " missing", v));
-    if (properties.TAG === "Ok") {
+    let spice_field_properties = Stdlib_Option.getOr(Stdlib_Option.map(v["properties"], extra => Spice.arrayFromJson(decoder_data, extra)), Spice.error(undefined, "properties" + " missing", v));
+    if (spice_field_properties.TAG === "Ok") {
       return {
         TAG: "Ok",
         _0: {
-          properties: properties._0
+          properties: spice_field_properties._0
         }
       };
     }
-    let e = properties._0;
+    let e = spice_field_properties._0;
     return Spice.error("." + ("properties" + e.path), e.message, e.value);
   };
 }
@@ -67,22 +67,22 @@ function pairObject_decode(decoder_left) {
     if (typeof v !== "object" || v === null || Array.isArray(v)) {
       return Spice.error(undefined, "Not an object", v);
     }
-    let left = Stdlib_Option.getOr(Stdlib_Option.map(v["left"], decoder_left), Spice.error(undefined, "left" + " missing", v));
-    if (left.TAG === "Ok") {
-      let right = Stdlib_Option.getOr(Stdlib_Option.map(v["right"], decoder_right), Spice.error(undefined, "right" + " missing", v));
-      if (right.TAG === "Ok") {
+    let spice_field_left = Stdlib_Option.getOr(Stdlib_Option.map(v["left"], decoder_left), Spice.error(undefined, "left" + " missing", v));
+    if (spice_field_left.TAG === "Ok") {
+      let spice_field_right = Stdlib_Option.getOr(Stdlib_Option.map(v["right"], decoder_right), Spice.error(undefined, "right" + " missing", v));
+      if (spice_field_right.TAG === "Ok") {
         return {
           TAG: "Ok",
           _0: {
-            left: left._0,
-            right: right._0
+            left: spice_field_left._0,
+            right: spice_field_right._0
           }
         };
       }
-      let e = right._0;
+      let e = spice_field_right._0;
       return Spice.error("." + ("right" + e.path), e.message, e.value);
     }
-    let e$1 = left._0;
+    let e$1 = spice_field_left._0;
     return Spice.error("." + ("left" + e$1.path), e$1.message, e$1.value);
   });
 }
@@ -124,25 +124,25 @@ function nestedObject_decode(decoder_data) {
     if (typeof v !== "object" || v === null || Array.isArray(v)) {
       return Spice.error(undefined, "Not an object", v);
     }
-    let items = Stdlib_Option.getOr(Stdlib_Option.map(v["items"], extra => Spice.arrayFromJson(dataObject_decode(decoder_data), extra)), Spice.error(undefined, "items" + " missing", v));
-    if (items.TAG === "Ok") {
-      let selected = Stdlib_Option.getOr(Stdlib_Option.map(v["selected"], extra => Spice.optionalFieldFromJson(decoder_data, extra)), {
+    let spice_field_items = Stdlib_Option.getOr(Stdlib_Option.map(v["items"], extra => Spice.arrayFromJson(dataObject_decode(decoder_data), extra)), Spice.error(undefined, "items" + " missing", v));
+    if (spice_field_items.TAG === "Ok") {
+      let spice_field_selected = Stdlib_Option.getOr(Stdlib_Option.map(v["selected"], extra => Spice.optionalFieldFromJson(decoder_data, extra)), {
         TAG: "Ok",
         _0: undefined
       });
-      if (selected.TAG === "Ok") {
+      if (spice_field_selected.TAG === "Ok") {
         return {
           TAG: "Ok",
           _0: {
-            items: items._0,
-            selected: selected._0
+            items: spice_field_items._0,
+            selected: spice_field_selected._0
           }
         };
       }
-      let e = selected._0;
+      let e = spice_field_selected._0;
       return Spice.error("." + ("selected" + e.path), e.message, e.value);
     }
-    let e$1 = items._0;
+    let e$1 = spice_field_items._0;
     return Spice.error("." + ("items" + e$1.path), e$1.message, e$1.value);
   };
 }

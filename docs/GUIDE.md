@@ -137,6 +137,10 @@ For constructors with an inline record this is also the variant's runtime repres
 
 `@spice.as("...")` renames a constructor in JSON, like `#[serde(rename = "...")]`, and may be used on any constructor. Polymorphic variants are always externally tagged.
 
+Two constructors can't share a JSON name, and with `@tag` no payload field may be keyed like the tag; both are compile errors.
+
+As in serde, decoders ignore keys they don't know, a constructor without payload also decodes from `{"Name": null}` (externally tagged), and an `option<option<_>>` payload loses `Some(None)`, which encodes as `null` like `None`.
+
 The decoders also accept the default spice encoding (`["Polygon", {"sides": 5}]`), so JSON written before a type switched to `@spice.serde` keeps decoding. Internally tagged decoders also accept a bare string for constructors without payload (`"Circle"`). Encoders only write the serde form.
 
 ### Option and Null
