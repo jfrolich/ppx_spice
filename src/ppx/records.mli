@@ -5,6 +5,7 @@ val generate_codecs :
   Parsetree.expression option * Parsetree.expression option
 
 val generate_inline_record_encoder_expr :
+  ?leading_entries:Parsetree.expression list ->
   Utils.generator_settings ->
   Parsetree.label_declaration list ->
   Parsetree.expression

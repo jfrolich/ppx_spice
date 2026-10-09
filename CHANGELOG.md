@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Unreleased
+
+- `@spice.serde`: encode variants and polymorphic variants like Rust's serde derive, externally tagged by default and internally tagged with ReScript's `@tag("...")`. Decoders also accept the default spice encoding, so previously stored JSON keeps decoding. See [Serde-compatible variants](docs/GUIDE.md#serde-compatible-variants).
+
 ## 0.5.2
 
 - `Spice.optionalFieldFromJson`: also fall back to `None` when the inner decoder raises on a JSON `null` (bs-json-style hand-written codecs throw instead of returning an `Error`); before 0.4 the inner decoder was never invoked on null, so such codecs crashed on legacy data carrying explicit nulls

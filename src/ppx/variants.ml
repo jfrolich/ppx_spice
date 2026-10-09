@@ -282,9 +282,53 @@ let validate_spice_as_payload unboxed parsed_decls =
                   single-payload variants"
            | _ -> ())
 
+let serde_case { name; alias; has_attr_as; constr_decl = { pcd_args; pcd_loc } }
+    : Serde.case =
+  let construct args = Exp.construct (lid name) args in
+  let payload, lhs =
+    match pcd_args with
+    | Pcstr_tuple [] -> (Serde.Unit, Pat.construct (lid name) None)
+    | Pcstr_tuple args ->
+        (Serde.Args args, Pat.construct (lid name) (Serde.args_pattern args))
+    | Pcstr_record fields ->
+        ( Serde.Record fields,
+          Pat.construct (lid name)
+            (Some (generate_inline_record_payload_pattern fields)) )
+  in
+  {
+    name = Serde.name_of_alias ~loc:pcd_loc ~has_attr_as ~alias name;
+    constructor = name;
+    loc = pcd_loc;
+    payload;
+    lhs;
+    construct;
+  }
+
+let generate_legacy_decoder generator_settings constr_decls =
+  let default_case =
+    {
+      pc_lhs = [%pat? _];
+      pc_guard = None;
+      pc_rhs =
+        [%expr
+          Spice.error "Invalid variant constructor" (Array.getUnsafe json_arr 0)];
+    }
+  in
+  constr_decls
+  |> List.map (generate_decoder_case generator_settings)
+  |> fun cases ->
+  cases @ [ default_case ] |> Exp.match_ [%expr Array.getUnsafe json_arr 0]
+
 let generate_codecs ({ do_encode; do_decode } as generator_settings)
     constr_decls unboxed =
   let parsed_decls = List.map (parse_decl generator_settings) constr_decls in
+  match generator_settings.serde with
+  | Some { tag } ->
+      if unboxed then failwith "@spice.serde can't be combined with @unboxed";
+      Serde.generate_codecs generator_settings ~tag
+        ~legacy:(fun () -> generate_legacy_decoder generator_settings constr_decls)
+        (List.map serde_case parsed_decls)
+  | None ->
   let count_has_attr =
     parsed_decls |> List.filter (fun v -> v.has_attr_as) |> List.length
   in

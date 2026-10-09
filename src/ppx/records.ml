@@ -15,25 +15,27 @@ type parsed_decl = {
   is_option : bool;
 }
 
-let generate_object_encoder_expr decls =
-  let arrExpr =
-    decls
-    |> List.map
-         (fun { key; field; codecs = encoder, _; is_optional; is_option } ->
-           if is_optional || is_option then
-             Exp.tuple
-               [ key; Exp.apply (Option.get encoder) [ (Nolabel, field) ] ]
-           else
-             [%expr
-               [%e key],
-                 (* The Encoder for option `Spice.optionToJson` returns option type.
-                      So, encoder for other types return with Some to match type of encoder. *)
-                 Some ([%e Option.get encoder] [%e field])])
-    |> Exp.array
-  in
+(* Each field as a (key, option<JSON.t>) pair; None leaves the key out. *)
+let generate_object_entries decls =
+  decls
+  |> List.map (fun { key; field; codecs = encoder, _; is_optional; is_option } ->
+         if is_optional || is_option then
+           Exp.tuple [ key; Exp.apply (Option.get encoder) [ (Nolabel, field) ] ]
+         else
+           [%expr
+             [%e key],
+               (* The Encoder for option `Spice.optionToJson` returns option type.
+                    So, encoder for other types return with Some to match type of encoder. *)
+               Some ([%e Option.get encoder] [%e field])])
+
+let generate_object_expr entries =
   Exp.constraint_
-    [%expr JSON.Object (Dict.fromArray (Spice.filterOptional [%e arrExpr]))]
+    [%expr
+      JSON.Object (Dict.fromArray (Spice.filterOptional [%e Exp.array entries]))]
     Utils.ctyp_json_t
+
+let generate_object_encoder_expr decls =
+  generate_object_expr (generate_object_entries decls)
 
 let generate_encoder decls unboxed =
   match unboxed with
@@ -218,10 +220,13 @@ let parse_decl ?field generator_settings
 let parse_inline_decl generator_settings decl =
   parse_decl ~field:(fun name -> make_ident_expr name) generator_settings decl
 
-let generate_inline_record_encoder_expr generator_settings decls =
+let generate_inline_record_encoder_expr ?(leading_entries = [])
+    generator_settings decls =
   decls
   |> List.map (parse_inline_decl generator_settings)
-  |> generate_object_encoder_expr
+  |> generate_object_entries
+  |> List.append leading_entries
+  |> generate_object_expr
 
 let generate_inline_record_decoder_expr generator_settings decls constructor_name =
   let parsed_decls = List.map (parse_inline_decl generator_settings) decls in
