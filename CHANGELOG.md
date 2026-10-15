@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.9.0
+
+- `@spice.serde` constructor attributes mirroring serde's: `@spice.other` (unknown names decode to it), `@spice.alias("...")` (extra names a constructor decodes from) and `@spice.untagged` (a one-value constructor written as its value alone). See [Unknown names, aliases and untagged constructors](docs/GUIDE.md#unknown-names-aliases-and-untagged-constructors).
+- `@spice.fallback(value)`: a type's decoder returns `Ok(value)` instead of an error.
+
 ## 0.8.0
 
 - `@spice.serde({legacyWrite: true})`: decoders read the serde and the default spice encoding, encoders write the default spice encoding, so stored JSON can move to serde once every reader understands it.

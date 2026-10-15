@@ -91,6 +91,15 @@ enum Tree {
     },
 }
 
+/// An `untagged` variant is written as its value alone.
+#[derive(Serialize)]
+enum Codec {
+    #[serde(rename = "prores")]
+    ProRes,
+    #[serde(untagged)]
+    Other(String),
+}
+
 /// Written with `null` for `None`, serde's default, to check spice reads it.
 #[derive(Serialize)]
 #[serde(tag = "type")]
@@ -166,6 +175,8 @@ fn main() {
         }),
     );
     add("with_null", to(&WithNull::N { b: None }));
+    add("codec_named", to(&Codec::ProRes));
+    add("codec_untagged", to(&Codec::Other("h264".into())));
 
     let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../fixtures/serde-rust.json");
     let text = serde_json::to_string_pretty(&json!(cases)).unwrap();

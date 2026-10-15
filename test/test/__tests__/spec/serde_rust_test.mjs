@@ -191,6 +191,12 @@ Zora.test("@spice.serde matches Rust serde", t => {
     }, "with_null");
   });
   used.contents = used.contents.concat(["with_null"]);
+  let codec = (name, v) => check(t, name, v, SerdeRust.codec_encode, SerdeRust.codec_decode);
+  codec("codec_named", "prores");
+  codec("codec_untagged", {
+    TAG: "Other",
+    _0: "h264"
+  });
   t.test("every golden case is checked", async t => {
     t.equal(used.contents.toSorted(Primitive_string.compare), Object.keys(golden).toSorted(Primitive_string.compare), "cases");
   });

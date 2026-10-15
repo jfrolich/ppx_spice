@@ -21,6 +21,12 @@ const fixtures = {
   "serde-tag-key-clash": "A payload field is keyed like the tag type",
   "serde-tag-tuple-payload":
     "An internally tagged (@tag) @spice.serde constructor can't have several payload values",
+  "serde-other-payload": "@spice.other needs a constructor without payload",
+  "serde-other-twice": "Only one constructor can be @spice.other",
+  "serde-untagged-arity": "@spice.untagged needs a constructor with one value",
+  "serde-other-untagged": "@spice.other and @spice.untagged can't be combined",
+  "serde-alias-duplicate": "Two constructors are both named A in JSON",
+  "alias-without-serde": "@spice.alias, @spice.other and @spice.untagged need @spice.serde",
 };
 
 let failed = false;

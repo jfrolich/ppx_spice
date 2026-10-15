@@ -215,8 +215,16 @@ let parse_decl ({ prf_desc; prf_loc; prf_attributes } as row_field) =
 
   { name = txt; alias; has_attr_as; row_field }
 
-let serde_case { name; alias; has_attr_as; row_field = { prf_desc; prf_loc } }
-    : Serde.case =
+let serde_case
+    {
+      name;
+      alias;
+      has_attr_as;
+      row_field = { prf_desc; prf_loc; prf_attributes };
+    } : Serde.case =
+  let aliases, other, untagged =
+    Serde.flags_of_attributes ~loc:prf_loc prf_attributes
+  in
   let args =
     match prf_desc with
     | Rtag (_, _, core_types) -> get_args_from_polyvars ~loc core_types
@@ -226,25 +234,70 @@ let serde_case { name; alias; has_attr_as; row_field = { prf_desc; prf_loc } }
   {
     name = Serde.name_of_alias ~loc:prf_loc ~has_attr_as ~alias name;
     constructor = name;
+    aliases;
+    other;
+    untagged;
     loc = prf_loc;
     payload = (match args with [] -> Serde.Unit | _ -> Serde.Args args);
     lhs = Pat.variant name (Serde.args_pattern args);
     construct = Exp.variant name;
   }
 
+(* As [Variants.generate_legacy_decoder]. *)
 let generate_legacy_decoder generator_settings row_fields =
+  let flags { prf_loc; prf_attributes } =
+    Serde.flags_of_attributes ~loc:prf_loc prf_attributes
+  in
   let default_case =
     {
       pc_lhs = [%pat? _];
       pc_guard = None;
       pc_rhs =
-        [%expr
-          Spice.error "Invalid polymorphic variant constructor"
-            (Array.getUnsafe json_arr 0)];
+        (match
+           List.find_opt (fun row -> let _, other, _ = flags row in other)
+             row_fields
+         with
+        | Some { prf_desc = Rtag ({ txt }, _, _) } ->
+            (* A unit constructor: no arguments. *)
+            [%expr
+              if Array.length json_arr <> 1 then
+                Spice.error
+                  "Invalid number of arguments to polyvariant constructor" v
+              else Ok [%e Exp.variant txt None]]
+        | _ ->
+            [%expr
+              Spice.error "Invalid polymorphic variant constructor"
+                (Array.getUnsafe json_arr 0)]);
     }
   in
   row_fields
-  |> List.map (generate_decoder_case generator_settings)
+  |> List.concat_map (fun row ->
+         let case = generate_decoder_case generator_settings row in
+         let aliases, _, _ = flags row in
+         let constructors =
+           List.filter_map
+             (fun { prf_desc } ->
+               match prf_desc with
+               | Rtag ({ txt }, _, _) -> Some txt
+               | Rinherit _ -> None)
+             row_fields
+         in
+         let aliases =
+           List.filter (fun a -> not (List.mem a constructors)) aliases
+         in
+         case
+         :: List.map
+              (fun alias ->
+                {
+                  case with
+                  pc_lhs =
+                    Pat.construct (lid "JSON.String")
+                      (Some
+                         ( [],
+                           Pat.constant
+                             (Pconst_string (alias, Location.none, None)) ));
+                })
+              aliases)
   |> fun cases ->
   cases @ [ default_case ] |> Exp.match_ [%expr Array.getUnsafe json_arr 0]
 
@@ -290,6 +343,9 @@ let generate_codecs ({ do_encode; do_decode } as generator_settings) row_fields
       in
       (encoder, decoder)
   | None ->
+  row_fields
+  |> List.iter (fun { prf_loc; prf_attributes } ->
+         Serde.reject_flags ~loc:prf_loc prf_attributes);
   let count_has_attr =
     parsed_fields |> List.filter (fun v -> v.has_attr_as) |> List.length
   in

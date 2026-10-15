@@ -67,6 +67,26 @@ let generate_codec_decls type_name param_names ?value_encoder
 
   vbs
 
+(* [@spice.fallback(value)]: whatever the decoder rejects decodes to
+   [value]; exceptions still propagate. *)
+let with_fallback attributes ((encoder, decoder) as codecs) =
+  match get_attribute_by_name attributes (annotation_name ^ ".fallback") with
+  | Ok None -> codecs
+  | Error s -> fail loc s
+  | Ok (Some attribute) -> (
+      let fallback = get_expression_from_payload attribute in
+      match decoder with
+      | None -> codecs
+      | Some decoder ->
+          ( encoder,
+            Some
+              (Utils.expr_func ~arity:1
+                 [%expr
+                   fun v ->
+                     match [%e decoder] v with
+                     | Ok _ as ok -> ok
+                     | Error _ -> Ok [%e fallback]]) ))
+
 let map_type_decl decl =
   let {
     ptype_attributes;
@@ -94,8 +114,9 @@ let map_type_decl decl =
       | Some { ptyp_desc = Ptyp_variant (row_fields, _, _) }, Ptype_abstract ->
           generate_codec_decls type_name
             (get_param_names ptype_params)
-            (Polyvariants.generate_codecs generator_settings row_fields
-               is_unboxed)
+            (with_fallback ptype_attributes
+              (Polyvariants.generate_codecs generator_settings row_fields
+               is_unboxed))
       | Some manifest, _ ->
           let value_encoder =
             if
@@ -111,15 +132,18 @@ let map_type_decl decl =
           generate_codec_decls type_name
             (get_param_names ptype_params)
             ?value_encoder
-            (generate_codecs generator_settings manifest)
+            (with_fallback ptype_attributes
+              (generate_codecs generator_settings manifest))
       | None, Ptype_variant decls ->
           generate_codec_decls type_name
             (get_param_names ptype_params)
-            (Variants.generate_codecs generator_settings decls is_unboxed)
+            (with_fallback ptype_attributes
+              (Variants.generate_codecs generator_settings decls is_unboxed))
       | None, Ptype_record decls ->
           generate_codec_decls type_name
             (get_param_names ptype_params)
-            (Records.generate_codecs generator_settings decls is_unboxed)
+            (with_fallback ptype_attributes
+              (Records.generate_codecs generator_settings decls is_unboxed))
       | _ -> fail ptype_loc "This type is not handled by spice")
   | Error s -> fail ptype_loc s
 

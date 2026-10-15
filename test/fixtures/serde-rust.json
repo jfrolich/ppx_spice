@@ -1,4 +1,6 @@
 {
+  "codec_named": "prores",
+  "codec_untagged": "h264",
   "ext_float": {
     "Float": 1.5
   },

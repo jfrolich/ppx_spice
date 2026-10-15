@@ -150,6 +150,31 @@ type shape = Circle | Polygon({sides: int})
 
 `@spice.serde({legacyWrite: true})` reads both forms too, but encoders write the default spice encoding, an array led by the constructor's name (`["Polygon", {"sides": 5}]`, also for a renamed constructor). That lets every reader of stored JSON learn the serde form before anything writes it: switch to `{legacy: true}` once they all have.
 
+#### Unknown names, aliases and untagged constructors
+
+These constructor attributes work only with `@spice.serde` and mirror serde's:
+
+- `@spice.other` (`#[serde(other)]`): a constructor without payload that every unknown constructor name decodes to. Values that aren't a variant at all still fail.
+- `@spice.alias("...")` (`#[serde(alias = "...")]`): another name the constructor decodes from, also in the legacy array form. It still encodes under its own name. Repeat it for several aliases.
+- `@spice.untagged` (`#[serde(untagged)]` on a variant): a constructor with one value, written as that value alone. It decodes whatever no named constructor reads, trying untagged constructors in order. It can't be combined with `@spice.other`.
+
+```rescript
+@spice.serde
+type codec =
+  | @as("prores") ProRes
+  | @spice.alias("H264") @as("h264") H264
+  | @spice.untagged Other(string)
+```
+
+### Fallback
+
+`@spice.fallback(value)` on any type makes its decoder return `Ok(value)` for anything it would reject, like a `#[serde(deserialize_with)]` function that defaults on error.
+
+```rescript
+@spice.serde @spice.fallback(Solid("white"))
+type background = Solid(string) | Image(string)
+```
+
 ### Option and Null
 
 In records, `option<T>` fields and optional fields encode `None` by omitting the object key. A missing key decodes to `None`. A present JSON `null` is decoded by `T`; for example, `option<string>` fails on `null` because `string` cannot decode `null`. Use `Null.t<T>` when a present JSON `null` is a valid value.

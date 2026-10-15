@@ -2308,6 +2308,93 @@ function withNull_decode(v) {
   }
 }
 
+function codec_encode(v) {
+  if (typeof v !== "object") {
+    return "prores";
+  } else {
+    return Spice.stringToJson(v._0);
+  }
+}
+
+function codec_encodeJson(v) {
+  if (typeof v !== "object") {
+    return "prores";
+  } else {
+    return Spice.stringToJson(v._0);
+  }
+}
+
+function codec_decode(v) {
+  let ok;
+  if (v === null) {
+    ok = Spice.error(undefined, "Not a variant", v);
+  } else if (Array.isArray(v)) {
+    ok = Spice.error(undefined, "Expected variant, found array", v);
+  } else {
+    switch (typeof v) {
+      case "string" :
+        ok = v === "prores" ? ({
+            TAG: "Ok",
+            _0: "prores"
+          }) : Spice.error(undefined, "Invalid variant constructor", v);
+        break;
+      case "boolean" :
+      case "number" :
+        ok = Spice.error(undefined, "Not a variant", v);
+        break;
+      case "object" :
+        let match = Object.entries(v);
+        if (match.length !== 1) {
+          ok = Spice.error(undefined, "Expected an object with one key", v);
+        } else {
+          let match$1 = match[0];
+          let payload = match$1[1];
+          if (match$1[0] === "prores") {
+            let v$1;
+            v$1 = payload === null ? ({
+                TAG: "Ok",
+                _0: "prores"
+              }) : Spice.error(undefined, "Expected null", payload);
+            if (v$1.TAG === "Ok") {
+              ok = {
+                TAG: "Ok",
+                _0: v$1._0
+              };
+            } else {
+              let e = v$1._0;
+              ok = {
+                TAG: "Error",
+                _0: {
+                  path: ".prores" + e.path,
+                  message: e.message,
+                  value: e.value
+                }
+              };
+            }
+          } else {
+            ok = Spice.error(undefined, "Invalid variant constructor", v);
+          }
+        }
+        break;
+    }
+  }
+  if (ok.TAG === "Ok") {
+    return ok;
+  }
+  let v0 = Spice.stringFromJson(v);
+  if (v0.TAG === "Ok") {
+    return {
+      TAG: "Ok",
+      _0: {
+        TAG: "Other",
+        _0: v0._0
+      }
+    };
+  } else {
+    return ok;
+  }
+}
+
 export {
   size_encode,
   size_encodeJson,
@@ -2336,5 +2423,8 @@ export {
   withNull_encode,
   withNull_encodeJson,
   withNull_decode,
+  codec_encode,
+  codec_encodeJson,
+  codec_decode,
 }
 /* No side effect */

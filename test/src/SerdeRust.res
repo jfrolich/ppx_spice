@@ -44,3 +44,8 @@ type rec tree = Leaf | Node({left: tree, right: tree, value: int})
 
 @spice.serde({legacy: true}) @tag("type")
 type withNull = N({b: option<int>})
+
+@spice.serde
+type codec =
+  | @as("prores") ProRes
+  | @spice.untagged Other(string)

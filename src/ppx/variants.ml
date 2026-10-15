@@ -301,29 +301,76 @@ let serde_case
           Pat.construct (lid name)
             (Some (generate_inline_record_payload_pattern fields)) )
   in
+  let aliases, other, untagged =
+    Serde.flags_of_attributes ~loc:pcd_loc pcd_attributes
+  in
   {
     name =
       Serde.name_of_attributes ~loc:pcd_loc ~has_attr_as ~alias pcd_attributes
         name;
     constructor = name;
+    aliases;
+    other;
+    untagged;
     loc = pcd_loc;
     payload;
     lhs;
     construct;
   }
 
+(* The default spice encoding's decoder; in serde mode, a constructor's
+   [@spice.alias] names decode too, and an unknown one decodes to its
+   [@spice.other] constructor. *)
 let generate_legacy_decoder generator_settings constr_decls =
+  let flags ({ pcd_loc; pcd_attributes } : constructor_declaration) =
+    Serde.flags_of_attributes ~loc:pcd_loc pcd_attributes
+  in
   let default_case =
     {
       pc_lhs = [%pat? _];
       pc_guard = None;
       pc_rhs =
-        [%expr
-          Spice.error "Invalid variant constructor" (Array.getUnsafe json_arr 0)];
+        (match
+           List.find_opt (fun decl -> let _, other, _ = flags decl in other)
+             constr_decls
+         with
+        | Some { pcd_name = { txt } } ->
+            (* A unit constructor: no arguments. *)
+            [%expr
+              if Array.length json_arr <> 1 then
+                Spice.error
+                  "Invalid number of arguments to variant constructor" v
+              else Ok [%e Exp.construct (lid txt) None]]
+        | None ->
+            [%expr
+              Spice.error "Invalid variant constructor"
+                (Array.getUnsafe json_arr 0)]);
     }
   in
   constr_decls
-  |> List.map (generate_decoder_case generator_settings)
+  |> List.concat_map (fun decl ->
+         let case = generate_decoder_case generator_settings decl in
+         let aliases, _, _ = flags decl in
+         let constructors =
+           List.map
+             (fun ({ pcd_name = { txt } } : constructor_declaration) -> txt)
+             constr_decls
+         in
+         let aliases =
+           List.filter (fun a -> not (List.mem a constructors)) aliases
+         in
+         case
+         :: List.map
+              (fun alias ->
+                {
+                  case with
+                  pc_lhs =
+                    Pat.construct (lid "JSON.String")
+                      (Some
+                         (Pat.constant
+                            (Pconst_string (alias, Location.none, None))));
+                })
+              aliases)
   |> fun cases ->
   cases @ [ default_case ] |> Exp.match_ [%expr Array.getUnsafe json_arr 0]
 
@@ -369,6 +416,9 @@ let generate_codecs ({ do_encode; do_decode } as generator_settings)
       in
       (encoder, decoder)
   | None ->
+  constr_decls
+  |> List.iter (fun { pcd_loc; pcd_attributes } ->
+         Serde.reject_flags ~loc:pcd_loc pcd_attributes);
   let count_has_attr =
     parsed_decls |> List.filter (fun v -> v.has_attr_as) |> List.length
   in

@@ -90,6 +90,10 @@ zoraBlock("@spice.serde matches Rust serde", t => {
   })
   used := used.contents->Array.concat(["with_null"])
 
+  let codec = (name, v) => check(t, name, v, codec_encode, codec_decode)
+  codec("codec_named", ProRes)
+  codec("codec_untagged", Other("h264"))
+
   t->test("every golden case is checked", async t => {
     t->equal(
       used.contents->Array.toSorted(String.compare),

@@ -16,6 +16,13 @@ type case = {
   name : string;
   (* The ReScript constructor. *)
   constructor : string;
+  (* [@spice.alias("...")]: other names it decodes from. *)
+  aliases : string list;
+  (* [@spice.other]: a unit constructor any unknown name decodes to. *)
+  other : bool;
+  (* [@spice.untagged]: a one-value constructor written as its value alone,
+     decoded from what no named constructor reads. *)
+  untagged : bool;
   loc : Location.t;
   payload : payload;
   (* The constructor pattern, binding [v0], [v1], ... or the record fields. *)
@@ -58,6 +65,38 @@ let name_of_attributes ~loc ~has_attr_as ~alias attributes constructor =
           else s
       | _ -> fail loc "@spice.serde needs @as to be a string")
 
+(* The constructor attributes serde mode reads besides its name:
+   [@spice.alias], [@spice.other] and [@spice.untagged]. *)
+let flags_of_attributes ~loc attributes =
+  let named name =
+    List.filter
+      (fun { attr_name = { txt } } -> txt = annotation_name ^ "." ^ name)
+      attributes
+  in
+  let flag name =
+    match named name with
+    | [] -> false
+    | [ { attr_payload = PStr [] } ] -> true
+    | [ _ ] -> fail loc ("@spice." ^ name ^ " takes no payload")
+    | _ -> fail loc ("Too many occurrences of @spice." ^ name)
+  in
+  let aliases =
+    named "alias"
+    |> List.map (fun attribute ->
+           match (get_expression_from_payload attribute).pexp_desc with
+           | Pexp_constant (Pconst_string (s, _, _)) -> s
+           | _ -> fail loc "@spice.alias needs a string")
+  in
+  (aliases, flag "other", flag "untagged")
+
+(* Fails on serde-only constructor attributes outside serde mode. *)
+let reject_flags ~loc attributes =
+  match flags_of_attributes ~loc attributes with
+  | [], false, false -> ()
+  | _ ->
+      fail loc
+        "@spice.alias, @spice.other and @spice.untagged need @spice.serde"
+
 let json_object entries =
   Exp.constraint_
     [%expr JSON.Object (Dict.fromArray [%e Exp.array entries])]
@@ -66,15 +105,43 @@ let json_object entries =
 let validate_names cases =
   let rec check seen = function
     | [] -> ()
-    | { name; loc } :: rest ->
+    | (name, loc) :: rest ->
         if List.mem name seen then
           fail loc ("Two constructors are both named " ^ name ^ " in JSON")
         else check (name :: seen) rest
   in
-  check [] cases
+  cases
+  |> List.filter (fun { untagged } -> not untagged)
+  |> List.concat_map (fun { name; aliases; loc } ->
+         List.map (fun name -> (name, loc)) (name :: aliases))
+  |> check []
+
+let validate_flags cases =
+  let others = List.filter (fun { other } -> other) cases in
+  let untagged = List.filter (fun { untagged } -> untagged) cases in
+  (match others with
+  | _ :: { loc } :: _ -> fail loc "Only one constructor can be @spice.other"
+  | _ -> ());
+  others
+  |> List.iter (fun { loc; payload } ->
+         match payload with
+         | Unit -> ()
+         | _ -> fail loc "@spice.other needs a constructor without payload");
+  untagged
+  |> List.iter (fun { loc; payload; aliases } ->
+         (match payload with
+         | Args [ _ ] -> ()
+         | _ -> fail loc "@spice.untagged needs a constructor with one value");
+         if aliases <> [] then
+           fail loc "An @spice.untagged constructor has no name to alias");
+  match (others, untagged) with
+  | _ :: _, { loc } :: _ ->
+      fail loc "@spice.other and @spice.untagged can't be combined"
+  | _ -> ()
 
 let validate ~tag cases =
   validate_names cases;
+  validate_flags cases;
   match tag with
   | None -> ()
   | Some tag ->
@@ -108,9 +175,10 @@ let encode_arg generator_settings arg name =
   let encoder, _ = Codecs.generate_value_codecs generator_settings arg in
   Exp.apply (Option.get encoder) [ (Nolabel, make_ident_expr name) ]
 
-let encoder_case generator_settings ~tag { name; payload; lhs } =
+let encoder_case generator_settings ~tag { name; payload; lhs; untagged } =
   let rhs =
     match (payload, tag) with
+    | Args [ arg ], _ when untagged -> encode_arg generator_settings arg "v0"
     | Unit, None -> [%expr JSON.String [%e str name]]
     | Unit, Some tag ->
         json_object [ [%expr [%e str tag], JSON.String [%e str name]] ]
@@ -215,70 +283,123 @@ let rec decode_by_name cases ~otherwise =
 
 (* [legacy] decodes the default spice encoding, an array with the
    constructor first, given [json_arr]. *)
+(* [(name, decoded)] for every JSON name a case reads, its aliases too. *)
+let by_names f cases =
+  cases
+  |> List.concat_map (fun case ->
+         match f case with
+         | None -> []
+         | Some decoded ->
+             List.map
+               (fun name -> (name, decoded name))
+               (case.name :: case.aliases))
+
+(* Decodes [v] as the first [@spice.untagged] constructor whose value it is,
+   else gives [error]. *)
+let rec decode_untagged generator_settings cases ~error =
+  match cases with
+  | [] -> error
+  | { payload = Args [ arg ]; construct } :: rest ->
+      let _, decoder = Codecs.generate_value_codecs generator_settings arg in
+      [%expr
+        match [%e Option.get decoder] v with
+        | Ok v0 -> Ok [%e construct (Some [%expr v0])]
+        | Error _ ->
+            [%e decode_untagged generator_settings rest ~error]]
+  | { loc } :: _ -> fail loc "@spice.untagged needs a constructor with one value"
+
 let generate_decoder generator_settings ~tag ~legacy cases =
   (* serde writes a unit constructor as a bare string only when externally
      tagged; an internally tagged one reads it only as a legacy value. *)
   let string_decodes = Option.is_none tag || Option.is_some legacy in
-  let invalid = [%expr Spice.error "Invalid variant constructor" v] in
+  let untagged = List.filter (fun { untagged } -> untagged) cases in
+  let cases = List.filter (fun { untagged } -> not untagged) cases in
+  let other = List.find_opt (fun { other } -> other) cases in
+  let invalid =
+    match other with
+    | Some { construct } -> [%expr Ok [%e construct None]]
+    | None -> [%expr Spice.error "Invalid variant constructor" v]
+  in
   let units =
     cases
-    |> List.filter_map (fun { name; payload; construct } ->
+    |> by_names (fun { payload; construct } ->
            match payload with
-           | Unit -> Some (name, [%expr Ok [%e construct None]])
+           | Unit -> Some (fun _ -> [%expr Ok [%e construct None]])
            | _ -> None)
+  in
+  (* As serde: a bare string naming a constructor with a payload is an
+     error, not the [@spice.other] constructor. *)
+  let names =
+    match other with
+    | None -> units
+    | Some _ ->
+        units
+        @ (cases
+          |> by_names (fun { payload } ->
+                 match payload with
+                 | Unit -> None
+                 | _ ->
+                     Some
+                       (fun _ -> [%expr Spice.error "Invalid variant constructor" v])))
+  in
+  (* As serde: an unknown name keyed to anything but null is an error. *)
+  let unknown_key =
+    match other with
+    | Some { construct } ->
+        [%expr
+          match payload with
+          | JSON.Null -> Ok [%e construct None]
+          | _ -> Spice.error ~path:("." ^ spice_tag) "Expected null" payload]
+    | None -> invalid
   in
   let object_decoder =
     match tag with
     | None ->
         let with_payload =
           cases
-          |> List.filter_map (fun ({ name; constructor; payload } as case) ->
+          |> by_names (fun ({ constructor; payload } as case) ->
                  let decoded =
                    match payload with
                    | Unit ->
                        (* serde also reads a unit variant written as a map. *)
-                       Some
-                         [%expr
-                           match payload with
-                           | JSON.Null -> Ok [%e case.construct None]
-                           | _ -> Spice.error "Expected null" payload]
-                   | Args args -> Some (decode_args generator_settings case args)
+                       [%expr
+                         match payload with
+                         | JSON.Null -> Ok [%e case.construct None]
+                         | _ -> Spice.error "Expected null" payload]
+                   | Args args -> decode_args generator_settings case args
                    | Record fields ->
-                       Some
-                         [%expr
-                           match payload with
-                           | JSON.Object dict ->
-                               [%e
-                                 Records.generate_inline_record_decoder_expr
-                                   generator_settings fields constructor]
-                           | _ -> Spice.error "Not an object" payload]
+                       [%expr
+                         match payload with
+                         | JSON.Object dict ->
+                             [%e
+                               Records.generate_inline_record_decoder_expr
+                                 generator_settings fields constructor]
+                         | _ -> Spice.error "Not an object" payload]
                  in
-                 Option.map
-                   (fun decoded -> (name, with_path ("." ^ name) decoded))
-                   decoded)
+                 Some (fun name -> with_path ("." ^ name) decoded))
         in
         [%expr
           match Dict.toArray dict with
           | [| (spice_tag, payload) |] ->
-              [%e decode_by_name with_payload ~otherwise:invalid]
+              [%e decode_by_name with_payload ~otherwise:unknown_key]
           | _ -> Spice.error "Expected an object with one key" v]
     | Some tag ->
         let records =
           cases
-          |> List.filter_map (fun ({ name; constructor; payload } as case) ->
+          |> by_names (fun ({ constructor; payload } as case) ->
                  match payload with
                  | Record fields ->
                      Some
-                       ( name,
+                       (fun _ ->
                          Records.generate_inline_record_decoder_expr
-                           generator_settings fields constructor )
+                           generator_settings fields constructor)
                  | Args args ->
                      (* The payload decodes from the tagged object itself. *)
                      Some
-                       ( name,
+                       (fun _ ->
                          [%expr
                            let payload = Spice.untagged [%e str tag] dict in
-                           [%e decode_args generator_settings case args]] )
+                           [%e decode_args generator_settings case args]])
                  | Unit -> None)
         in
         [%expr
@@ -295,7 +416,7 @@ let generate_decoder generator_settings ~tag ~legacy cases =
          [ [%expr
              function
              | JSON.String spice_tag ->
-                 [%e decode_by_name units ~otherwise:invalid]] ]
+                 [%e decode_by_name names ~otherwise:invalid]] ]
        else [])
     (* Before JSON.Object, which also matches arrays at runtime. *)
     @ (match legacy with
@@ -320,8 +441,20 @@ let generate_decoder generator_settings ~tag ~legacy cases =
         | { pexp_loc } -> fail pexp_loc "expected a function")
       cases
   in
-  expr_func ~arity:1
-    [%expr fun v -> [%e Exp.match_ [%expr (v : JSON.t)] cases]]
+  let decoded = Exp.match_ [%expr (v : JSON.t)] cases in
+  let decoded =
+    match untagged with
+    | [] -> decoded
+    | _ ->
+        [%expr
+          match [%e decoded] with
+          | Ok _ as ok -> ok
+          | Error _ as error ->
+              [%e
+                decode_untagged generator_settings untagged
+                  ~error:[%expr error]]]
+  in
+  expr_func ~arity:1 [%expr fun v -> [%e decoded]]
 
 let generate_codecs ({ do_encode; do_decode } as generator_settings) ~tag
     ~legacy cases =

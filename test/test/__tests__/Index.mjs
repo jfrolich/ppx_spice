@@ -11,6 +11,7 @@ import * as Variants_test from "./spec/variants_test.mjs";
 import * as Serde_edge_test from "./spec/serde_edge_test.mjs";
 import * as Serde_rust_test from "./spec/serde_rust_test.mjs";
 import * as Polyvariants_test from "./spec/polyvariants_test.mjs";
+import * as Serde_extras_test from "./spec/serde_extras_test.mjs";
 import * as Serde_random_test from "./spec/serde_random_test.mjs";
 import * as Serde_strict_test from "./spec/serde_strict_test.mjs";
 import * as Encode_decode_test from "./spec/encode_decode_test.mjs";
@@ -74,9 +75,9 @@ let tree = Serde_random_test.tree;
 
 let check = Serde_random_test.check;
 
-let testEqual = Serde_legacy_write_test.testEqual;
+let testEqual = Serde_extras_test.testEqual;
 
-let json = Serde_legacy_write_test.json;
+let json = Serde_extras_test.json;
 
 export {
   dataObject,
