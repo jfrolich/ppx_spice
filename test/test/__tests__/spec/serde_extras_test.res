@@ -86,12 +86,17 @@ zoraBlock("@spice.other, @spice.alias, @spice.untagged, @spice.fallback", t => {
   t->testEqual("other: unknown bare name", mixed_decode(json(`"Square"`)), Ok(UnknownMixed))
   t->testEqual("other: legacy unknown", legacyOther_decode(json(`["Zzz"]`)), Ok(UnknownLegacy))
   t->testEqual(
-    "other: legacy unknown with arguments fails",
-    legacyOther_decode(json(`["Zzz", 1]`)),
+    "other: legacy unknown with arguments",
+    legacyOther_decode(json(`["Zzz", {"a": 1}]`)),
+    Ok(UnknownLegacy),
+  )
+  t->testEqual(
+    "other: legacy known with extra arguments fails",
+    legacyOther_decode(json(`["Known", 1]`)),
     Error({
       path: "",
       message: "Invalid number of arguments to variant constructor",
-      value: json(`["Zzz", 1]`),
+      value: json(`["Known", 1]`),
     }),
   )
 })

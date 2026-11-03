@@ -166,12 +166,16 @@ Zora.test("@spice.other, @spice.alias, @spice.untagged, @spice.fallback", t => {
     TAG: "Ok",
     _0: "UnknownLegacy"
   });
-  testEqual(t, "other: legacy unknown with arguments fails", SerdeExtras.legacyOther_decode(JSON.parse(`["Zzz", 1]`)), {
+  testEqual(t, "other: legacy unknown with arguments", SerdeExtras.legacyOther_decode(JSON.parse(`["Zzz", {"a": 1}]`)), {
+    TAG: "Ok",
+    _0: "UnknownLegacy"
+  });
+  testEqual(t, "other: legacy known with extra arguments fails", SerdeExtras.legacyOther_decode(JSON.parse(`["Known", 1]`)), {
     TAG: "Error",
     _0: {
       path: "",
       message: "Invalid number of arguments to variant constructor",
-      value: JSON.parse(`["Zzz", 1]`)
+      value: JSON.parse(`["Known", 1]`)
     }
   });
 });
