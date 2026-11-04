@@ -335,12 +335,9 @@ let generate_legacy_decoder generator_settings constr_decls =
              constr_decls
          with
         | Some { pcd_name = { txt } } ->
-            (* A unit constructor: no arguments. *)
-            [%expr
-              if Array.length json_arr <> 1 then
-                Spice.error
-                  "Invalid number of arguments to variant constructor" v
-              else Ok [%e Exp.construct (lid txt) None]]
+            (* A constructor added later, whatever its arguments, so a
+               reader deployed before it keeps reading. *)
+            [%expr Ok [%e Exp.construct (lid txt) None]]
         | None ->
             [%expr
               Spice.error "Invalid variant constructor"

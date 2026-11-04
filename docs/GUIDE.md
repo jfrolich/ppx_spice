@@ -154,7 +154,7 @@ type shape = Circle | Polygon({sides: int})
 
 These constructor attributes work only with `@spice.serde` and mirror serde's:
 
-- `@spice.other` (`#[serde(other)]`): a constructor without payload that every unknown constructor name decodes to. Values that aren't a variant at all still fail.
+- `@spice.other` (`#[serde(other)]`): a constructor without payload that every unknown constructor name decodes to. In the legacy array form an unknown constructor decodes to it whatever arguments it has, so a reader deployed before a constructor was added keeps reading. Values that aren't a variant at all still fail.
 - `@spice.alias("...")` (`#[serde(alias = "...")]`): another name the constructor decodes from, also in the legacy array form. It still encodes under its own name. Repeat it for several aliases.
 - `@spice.untagged` (`#[serde(untagged)]` on a variant): a constructor with one value, written as that value alone. It decodes whatever no named constructor reads, trying untagged constructors in order. It can't be combined with `@spice.other`.
 
