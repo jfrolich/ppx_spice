@@ -48,7 +48,36 @@ let nestedObjectJson = {
   selected: "one"
 };
 
+let usesPair_nested = {
+  left: dataObject,
+  right: {
+    left: true,
+    right: 1.5
+  }
+};
+
+let usesPair = {
+  pair: pairObject,
+  nested: usesPair_nested
+};
+
+let usesPairJson = {
+  pair: pairObjectJson,
+  nested: {
+    left: dataObjectJson,
+    right: {
+      left: true,
+      right: 1.5
+    }
+  }
+};
+
 Zora.test("generic type parameter codecs", t => {
+  testEqual(t, `encode a field of a type with two type arguments`, GenericTypeParams.usesPair_encode(usesPair), usesPairJson);
+  testEqual(t, `decode a field of a type with two type arguments`, GenericTypeParams.usesPair_decode(usesPairJson), {
+    TAG: "Ok",
+    _0: usesPair
+  });
   testEqual(t, `encode generic record`, GenericTypeParams.dataObject_encode(Spice.stringToJson)(dataObject), dataObjectJson);
   testEqual(t, `decode generic record`, GenericTypeParams.dataObject_decode(Spice.stringFromJson)(dataObjectJson), {
     TAG: "Ok",
@@ -74,5 +103,7 @@ export {
   pairObjectJson,
   nestedObject,
   nestedObjectJson,
+  usesPair,
+  usesPairJson,
 }
 /*  Not a pure module */

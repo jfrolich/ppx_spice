@@ -17,6 +17,15 @@ let is_dict_identifier = function
       true
   | _ -> false
 
+(* A parameterized type's codec takes the codecs of its type arguments one
+   at a time (`t_encode(encoder_a)(encoder_b)`), as [Structure.add_params]
+   defines it, so they are applied one at a time. *)
+let apply_each func args =
+  List.fold_left
+    (fun func arg ->
+      Exp.apply ~attrs:[ attr_partial ] func [ (Asttypes.Nolabel, Option.get arg) ])
+    func args
+
 let rec parameterize_value_codecs type_args encoder_func decoder_func
     generator_settings =
   let sub_encoders, sub_decoders =
@@ -25,20 +34,8 @@ let rec parameterize_value_codecs type_args encoder_func decoder_func
            generate_codecs_for Value_context generator_settings core_type)
     |> List.split
   in
-  ( (match encoder_func with
-    | None -> None
-    | Some encoder_func ->
-        sub_encoders
-        |> List.map (fun e -> (Asttypes.Nolabel, Option.get e))
-        |> Exp.apply ~attrs:[ attr_partial ] encoder_func
-        |> Option.some),
-    match decoder_func with
-    | None -> None
-    | Some decoder_func ->
-        sub_decoders
-        |> List.map (fun e -> (Asttypes.Nolabel, Option.get e))
-        |> Exp.apply ~attrs:[ attr_partial ] decoder_func
-        |> Option.some )
+  ( Option.map (fun encoder_func -> apply_each encoder_func sub_encoders) encoder_func,
+    Option.map (fun decoder_func -> apply_each decoder_func sub_decoders) decoder_func )
 
 and generate_constr_codecs context { do_encode; do_decode; _ }
     { Location.txt = identifier; loc } =

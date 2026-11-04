@@ -147,6 +147,55 @@ function nestedObject_decode(decoder_data) {
   };
 }
 
+function usesPair_encode(v) {
+  return Object.fromEntries(Spice.filterOptional([
+    [
+      "pair",
+      pairObject_encodeJson(Spice.stringToJson)(Spice.intToJson)(v.pair)
+    ],
+    [
+      "nested",
+      pairObject_encodeJson(dataObject_encodeJson(Spice.stringToJson))(extra => Spice.optionToNullableJson(pairObject_encodeJson(Spice.boolToJson)(Spice.floatToJson), extra))(v.nested)
+    ]
+  ]));
+}
+
+function usesPair_encodeJson(v) {
+  return Object.fromEntries(Spice.filterOptional([
+    [
+      "pair",
+      pairObject_encodeJson(Spice.stringToJson)(Spice.intToJson)(v.pair)
+    ],
+    [
+      "nested",
+      pairObject_encodeJson(dataObject_encodeJson(Spice.stringToJson))(extra => Spice.optionToNullableJson(pairObject_encodeJson(Spice.boolToJson)(Spice.floatToJson), extra))(v.nested)
+    ]
+  ]));
+}
+
+function usesPair_decode(v) {
+  if (typeof v !== "object" || v === null || Array.isArray(v)) {
+    return Spice.error(undefined, "Not an object", v);
+  }
+  let spice_field_pair = Stdlib_Option.getOr(Stdlib_Option.map(v["pair"], pairObject_decode(Spice.stringFromJson)(Spice.intFromJson)), Spice.error(undefined, "pair" + " missing", v));
+  if (spice_field_pair.TAG === "Ok") {
+    let spice_field_nested = Stdlib_Option.getOr(Stdlib_Option.map(v["nested"], pairObject_decode(dataObject_decode(Spice.stringFromJson))(extra => Spice.optionFromJson(pairObject_decode(Spice.boolFromJson)(Spice.floatFromJson), extra))), Spice.error(undefined, "nested" + " missing", v));
+    if (spice_field_nested.TAG === "Ok") {
+      return {
+        TAG: "Ok",
+        _0: {
+          pair: spice_field_pair._0,
+          nested: spice_field_nested._0
+        }
+      };
+    }
+    let e = spice_field_nested._0;
+    return Spice.error("." + ("nested" + e.path), e.message, e.value);
+  }
+  let e$1 = spice_field_pair._0;
+  return Spice.error("." + ("pair" + e$1.path), e$1.message, e$1.value);
+}
+
 export {
   dataObject_encode,
   dataObject_encodeJson,
@@ -157,5 +206,8 @@ export {
   nestedObject_encode,
   nestedObject_encodeJson,
   nestedObject_decode,
+  usesPair_encode,
+  usesPair_encodeJson,
+  usesPair_decode,
 }
 /* No side effect */

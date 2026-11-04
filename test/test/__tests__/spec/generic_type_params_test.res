@@ -33,7 +33,32 @@ let nestedObjectJson = JSON.Object(dict{
   "selected": JSON.String("one"),
 })
 
+let usesPair: GenericTypeParams.usesPair = {
+  pair: pairObject,
+  nested: {left: dataObject, right: Some({left: true, right: 1.5})},
+}
+
+let usesPairJson = JSON.Object(dict{
+  "pair": pairObjectJson,
+  "nested": JSON.Object(dict{
+    "left": dataObjectJson,
+    "right": JSON.Object(dict{"left": JSON.Boolean(true), "right": JSON.Number(1.5)}),
+  }),
+})
+
 zoraBlock("generic type parameter codecs", t => {
+  t->testEqual(
+    `encode a field of a type with two type arguments`,
+    usesPair->GenericTypeParams.usesPair_encode,
+    usesPairJson,
+  )
+
+  t->testEqual(
+    `decode a field of a type with two type arguments`,
+    usesPairJson->GenericTypeParams.usesPair_decode,
+    Ok(usesPair),
+  )
+
   t->testEqual(
     `encode generic record`,
     (
