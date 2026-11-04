@@ -1183,113 +1183,115 @@ function legacyOther_decode(v) {
       return Spice.error(undefined, "Expected variant, found empty array", v);
     }
     let match = v[0];
-    if (typeof match === "string") {
-      switch (match) {
-        case "Known" :
-          if (v.length !== 1) {
-            return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
-          } else {
-            return {
-              TAG: "Ok",
-              _0: "Known"
-            };
-          }
-        case "UnknownLegacy" :
-          if (v.length !== 1) {
-            return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
-          } else {
-            return {
-              TAG: "Ok",
-              _0: "UnknownLegacy"
-            };
-          }
-      }
-    }
-    if (v.length !== 1) {
-      return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
-    } else {
+    if (typeof match !== "string") {
       return {
         TAG: "Ok",
         _0: "UnknownLegacy"
       };
     }
-  }
-  switch (typeof v) {
-    case "string" :
-      if (v === "Known") {
-        return {
-          TAG: "Ok",
-          _0: "Known"
-        };
-      } else {
-        return {
-          TAG: "Ok",
-          _0: "UnknownLegacy"
-        };
-      }
-    case "boolean" :
-    case "number" :
-      return Spice.error(undefined, "Not a variant", v);
-    case "object" :
-      let match$1 = Object.entries(v);
-      if (match$1.length !== 1) {
-        return Spice.error(undefined, "Expected an object with one key", v);
-      }
-      let match$2 = match$1[0];
-      let payload = match$2[1];
-      let spice_tag = match$2[0];
-      if (spice_tag === "Known") {
-        let v$1;
-        v$1 = payload === null ? ({
-            TAG: "Ok",
-            _0: "Known"
-          }) : Spice.error(undefined, "Expected null", payload);
-        if (v$1.TAG === "Ok") {
+    switch (match) {
+      case "Known" :
+        if (v.length !== 1) {
+          return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
+        } else {
           return {
             TAG: "Ok",
-            _0: v$1._0
+            _0: "Known"
           };
         }
-        let e = v$1._0;
-        return {
-          TAG: "Error",
-          _0: {
-            path: ".Known" + e.path,
-            message: e.message,
-            value: e.value
-          }
-        };
-      }
-      if (spice_tag !== "UnknownLegacy") {
-        if (payload === null) {
+      case "UnknownLegacy" :
+        if (v.length !== 1) {
+          return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
+        } else {
           return {
             TAG: "Ok",
             _0: "UnknownLegacy"
           };
-        } else {
-          return Spice.error("." + spice_tag, "Expected null", payload);
         }
-      }
-      let v$2;
-      v$2 = payload === null ? ({
-          TAG: "Ok",
-          _0: "UnknownLegacy"
-        }) : Spice.error(undefined, "Expected null", payload);
-      if (v$2.TAG === "Ok") {
+      default:
         return {
           TAG: "Ok",
-          _0: v$2._0
+          _0: "UnknownLegacy"
         };
-      }
-      let e$1 = v$2._0;
-      return {
-        TAG: "Error",
-        _0: {
-          path: ".UnknownLegacy" + e$1.path,
-          message: e$1.message,
-          value: e$1.value
+    }
+  } else {
+    switch (typeof v) {
+      case "string" :
+        if (v === "Known") {
+          return {
+            TAG: "Ok",
+            _0: "Known"
+          };
+        } else {
+          return {
+            TAG: "Ok",
+            _0: "UnknownLegacy"
+          };
         }
-      };
+      case "boolean" :
+      case "number" :
+        return Spice.error(undefined, "Not a variant", v);
+      case "object" :
+        let match$1 = Object.entries(v);
+        if (match$1.length !== 1) {
+          return Spice.error(undefined, "Expected an object with one key", v);
+        }
+        let match$2 = match$1[0];
+        let payload = match$2[1];
+        let spice_tag = match$2[0];
+        if (spice_tag === "Known") {
+          let v$1;
+          v$1 = payload === null ? ({
+              TAG: "Ok",
+              _0: "Known"
+            }) : Spice.error(undefined, "Expected null", payload);
+          if (v$1.TAG === "Ok") {
+            return {
+              TAG: "Ok",
+              _0: v$1._0
+            };
+          }
+          let e = v$1._0;
+          return {
+            TAG: "Error",
+            _0: {
+              path: ".Known" + e.path,
+              message: e.message,
+              value: e.value
+            }
+          };
+        }
+        if (spice_tag !== "UnknownLegacy") {
+          if (payload === null) {
+            return {
+              TAG: "Ok",
+              _0: "UnknownLegacy"
+            };
+          } else {
+            return Spice.error("." + spice_tag, "Expected null", payload);
+          }
+        }
+        let v$2;
+        v$2 = payload === null ? ({
+            TAG: "Ok",
+            _0: "UnknownLegacy"
+          }) : Spice.error(undefined, "Expected null", payload);
+        if (v$2.TAG === "Ok") {
+          return {
+            TAG: "Ok",
+            _0: v$2._0
+          };
+        }
+        let e$1 = v$2._0;
+        return {
+          TAG: "Error",
+          _0: {
+            path: ".UnknownLegacy" + e$1.path,
+            message: e$1.message,
+            value: e$1.value
+          }
+        };
+    }
   }
 }
 
