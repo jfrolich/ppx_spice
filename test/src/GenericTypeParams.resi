@@ -12,3 +12,9 @@ type nestedObject<'data> = {
   items: array<dataObject<'data>>,
   selected: option<'data>,
 }
+
+@spice
+type usesPair = {
+  pair: pairObject<string, int>,
+  nested: pairObject<dataObject<string>, option<pairObject<bool, float>>>,
+}

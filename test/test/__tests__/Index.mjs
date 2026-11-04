@@ -33,6 +33,10 @@ let nestedObject = Generic_type_params_test.nestedObject;
 
 let nestedObjectJson = Generic_type_params_test.nestedObjectJson;
 
+let usesPair = Generic_type_params_test.usesPair;
+
+let usesPairJson = Generic_type_params_test.usesPairJson;
+
 let deepEqualWithBigInt = Records_test.deepEqualWithBigInt;
 
 let optionRecord = Top_level_options_test.optionRecord;
@@ -86,6 +90,8 @@ export {
   pairObjectJson,
   nestedObject,
   nestedObjectJson,
+  usesPair,
+  usesPairJson,
   deepEqualWithBigInt,
   optionRecord,
   optionRecordJson,
