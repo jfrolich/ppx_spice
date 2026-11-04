@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.10.0
+
+- `@spice.other`: in the legacy array form an unknown constructor decodes to it whatever arguments it has, so a reader deployed before a constructor with a payload was added keeps reading values that use it.
+- Fix: a field whose type passes two or more type arguments to a generic type (`pairObject<string, int>`) no longer breaks the generated codec; the argument codecs are applied one at a time.
+
 ## 0.9.0
 
 - `@spice.serde` constructor attributes mirroring serde's: `@spice.other` (unknown names decode to it), `@spice.alias("...")` (extra names a constructor decodes from) and `@spice.untagged` (a one-value constructor written as its value alone). See [Unknown names, aliases and untagged constructors](docs/GUIDE.md#unknown-names-aliases-and-untagged-constructors).
