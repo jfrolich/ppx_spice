@@ -1,8 +1,9 @@
 # CHANGELOG
 
-## Unreleased
+## 0.10.1
 
 - Fix: on ReScript 12, a `.resi` declaring a `@spice` type with type parameters (`@spice type t<'a> = ...`) no longer fails with "Values do not match" against its implementation; the encoder argument in the generated signature (`'a => JSON.t`) now has arity 1, like the decoder's. ReScript 13 was not affected.
+- Fix: build the macOS x64 binary on an Intel runner so the published package works on Intel Macs.
 
 ## 0.10.0
 
