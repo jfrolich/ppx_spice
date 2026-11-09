@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Unreleased
+
+- Fix: on ReScript 12, a `.resi` declaring a `@spice` type with type parameters (`@spice type t<'a> = ...`) no longer fails with "Values do not match" against its implementation; the encoder argument in the generated signature (`'a => JSON.t`) now has arity 1, like the decoder's. ReScript 13 was not affected.
+
 ## 0.10.0
 
 - `@spice.other`: in the legacy array form an unknown constructor decodes to it whatever arguments it has, so a reader deployed before a constructor with a payload was added keeps reading values that use it.

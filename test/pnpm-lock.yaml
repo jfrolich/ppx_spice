@@ -15,8 +15,8 @@ importers:
         specifier: workspace:../
         version: link:..
       '@rescript/runtime':
-        specifier: 12.0.0
-        version: 12.0.0
+        specifier: 12.3.1
+        version: 12.3.1
       onchange:
         specifier: ^7.1.0
         version: 7.1.0
@@ -24,8 +24,8 @@ importers:
         specifier: ^1.2.0
         version: 1.3.0(zora@5.2.0)
       rescript:
-        specifier: 12.0.0
-        version: 12.0.0
+        specifier: 12.3.1
+        version: 12.3.1
       tap-difflet:
         specifier: ^0.7.2
         version: 0.7.2
@@ -56,35 +56,35 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
-  '@rescript/darwin-arm64@12.0.0':
-    resolution: {integrity: sha512-N2zNj/Uh0zrg8BJGWxdQjYTDf0d2ZV8D+Vmct8xORaUcEZvAkvZb+xA66UxP2QGhWmATcHmBth7oJ48xpWz/Vg==}
+  '@rescript/darwin-arm64@12.3.1':
+    resolution: {integrity: sha512-pwdnHhuIMH4Y5nuEwBLAMOYvGIcAVgnSZq/DWUNZJWoUr7YZpNkABJp0TFGiyYePT5ld+nvjQ40oI0rKjEWK8w==}
     engines: {node: '>=20.11.0'}
     cpu: [arm64]
     os: [darwin]
 
-  '@rescript/darwin-x64@12.0.0':
-    resolution: {integrity: sha512-Qx/ao3Fl2lx3rF8mbRsyRK5HGAx8pmzyCdpSIAaUun5wLBnsJbNqgvqUH7VeI2TwaczHvcIljrYmnB7T5LJdFQ==}
+  '@rescript/darwin-x64@12.3.1':
+    resolution: {integrity: sha512-Eu39cHkzoHyC18BCRqnmZnLgP42c7JhR74UBl6XhaFOzuf63tddOssgTyX9mEihzok2xFBGLpETrCvZN8Qqtkg==}
     engines: {node: '>=20.11.0'}
     cpu: [x64]
     os: [darwin]
 
-  '@rescript/linux-arm64@12.0.0':
-    resolution: {integrity: sha512-H65csj/0uqqjYy235m0h5CFxbrsas6RoVfjy5Xjf91Vyg/r5R/QIGQvhMtFvl4QojYsa1wXzXGcujwXh+S15xQ==}
+  '@rescript/linux-arm64@12.3.1':
+    resolution: {integrity: sha512-Nsk3qfDRrp9b6RI85t0xzrr8LoxwXAI678V7zpQMaRfhltYl+N5fsK66MWx9rSrv6SIWPVSyU8FrJG0MskONwQ==}
     engines: {node: '>=20.11.0'}
     cpu: [arm64]
     os: [linux]
 
-  '@rescript/linux-x64@12.0.0':
-    resolution: {integrity: sha512-WizQwyfMadxF096foZYU3I4zxcnNIc9XP7TP4fqdfe0v6OvQ5yHMI/uIfOsJ1GfNALce2UxvgS0pn67uxc55uA==}
+  '@rescript/linux-x64@12.3.1':
+    resolution: {integrity: sha512-CfAJ3q/y/GSwrSJCLdCdyLWWdb7kTZkl2vjC+mSAw3pMqknEyCbt4ukS64Xn8PrqxVGHIs+kdefEphU7dt77xA==}
     engines: {node: '>=20.11.0'}
     cpu: [x64]
     os: [linux]
 
-  '@rescript/runtime@12.0.0':
-    resolution: {integrity: sha512-STRbYHT5rnW61vWn2+Bdtj620XaprnoBSbPbkvOYZ+Zs8nfqtpBjhNw+JNpGQLXf73crk6MhxFGPxL2o5vb8TQ==}
+  '@rescript/runtime@12.3.1':
+    resolution: {integrity: sha512-yTM0iTl6owyA37UEtPAZR0A3G1kFffJWb+UE6+rcG/N2kxYQnuSlNDfVvsry7l8O+o/ME6QE7Zt7efjCDGM3xg==}
 
-  '@rescript/win32-x64@12.0.0':
-    resolution: {integrity: sha512-kkqj4kQGbni5YglWoPm76M6hUuzKJHDEiLce5EZxW2Q4FrkS9dNRgm02c2Ck1cz/uKCS3m+ZoKQGIMMXTvo5Jw==}
+  '@rescript/win32-x64@12.3.1':
+    resolution: {integrity: sha512-1ffFbw9IJnJmGTNshWzRcG6wQ7GkzOeWxLLrarvxI38p2aYPQKTbVovUraXpw1Jfg2bbWkm8hPMMrFIezI/pkA==}
     engines: {node: '>=20.11.0'}
     cpu: [x64]
     os: [win32]
@@ -703,8 +703,8 @@ packages:
     resolution: {integrity: sha512-ZqtSMuVybkISo2OWvqvm7iHSWngvdaW3IpsT9/uP8v4gMi591LY6h35wdOfvQdWCKFWZWm2Y1Opp4kV7vQKT6A==}
     engines: {node: '>=0.10.0'}
 
-  rescript@12.0.0:
-    resolution: {integrity: sha512-DGcZI2L5W0c6FuEnspLE0MIe1UtTt1VsW/vQfzBFCEBxSsQtoA6YRHUB8Puwnb30PHqZiFK1ADhn6UgA8LWK0A==}
+  rescript@12.3.1:
+    resolution: {integrity: sha512-Q4y0SQ7EUShiX1ymEG5iOCGzbVSOh7CCLEnQUkq19FX2i64eQ2uEGeMCKFl0AsL7TcK5pS+66QTSP6jf6LSgaA==}
     engines: {node: '>=20.11.0'}
     hasBin: true
 
@@ -943,21 +943,21 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.20.1
 
-  '@rescript/darwin-arm64@12.0.0':
+  '@rescript/darwin-arm64@12.3.1':
     optional: true
 
-  '@rescript/darwin-x64@12.0.0':
+  '@rescript/darwin-x64@12.3.1':
     optional: true
 
-  '@rescript/linux-arm64@12.0.0':
+  '@rescript/linux-arm64@12.3.1':
     optional: true
 
-  '@rescript/linux-x64@12.0.0':
+  '@rescript/linux-x64@12.3.1':
     optional: true
 
-  '@rescript/runtime@12.0.0': {}
+  '@rescript/runtime@12.3.1': {}
 
-  '@rescript/win32-x64@12.0.0':
+  '@rescript/win32-x64@12.3.1':
     optional: true
 
   '@sindresorhus/merge-streams@2.3.0': {}
@@ -1687,15 +1687,15 @@ snapshots:
     dependencies:
       is-finite: 1.1.0
 
-  rescript@12.0.0:
+  rescript@12.3.1:
     dependencies:
-      '@rescript/runtime': 12.0.0
+      '@rescript/runtime': 12.3.1
     optionalDependencies:
-      '@rescript/darwin-arm64': 12.0.0
-      '@rescript/darwin-x64': 12.0.0
-      '@rescript/linux-arm64': 12.0.0
-      '@rescript/linux-x64': 12.0.0
-      '@rescript/win32-x64': 12.0.0
+      '@rescript/darwin-arm64': 12.3.1
+      '@rescript/darwin-x64': 12.3.1
+      '@rescript/linux-arm64': 12.3.1
+      '@rescript/linux-x64': 12.3.1
+      '@rescript/win32-x64': 12.3.1
 
   resolve@1.22.12:
     dependencies:
