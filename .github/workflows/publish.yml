@@ -13,6 +13,12 @@ on:
         description: "npm dist-tag to publish under (e.g., latest, next)"
         required: false
         default: latest
+      macos_arm64_release:
+        description: "Optional release tag containing ppx-osx-arm64.exe when macOS runners are unavailable"
+        required: false
+      macos_arm64_sha256:
+        description: "Required SHA-256 of the prebuilt macOS arm64 binary when using a release asset"
+        required: false
 
 env:
   TARGET_REF: ${{ github.event.inputs.ref || github.ref }}
@@ -135,7 +141,7 @@ jobs:
 
   build_macos_arm64:
     name: macOS-arm64
-    runs-on: macos-15
+    runs-on: ${{ inputs.macos_arm64_release && 'ubuntu-latest' || 'macos-15' }}
     defaults:
       run:
         working-directory: src
@@ -149,19 +155,38 @@ jobs:
           ref: ${{ env.TARGET_REF }}
 
       - name: Use OCaml ${{ env.ocaml-compiler }}
+        if: ${{ !inputs.macos_arm64_release }}
         uses: ocaml/setup-ocaml@v2
         with:
           ocaml-compiler: ${{ env.ocaml-compiler }}
 
       - name: Install deps
+        if: ${{ !inputs.macos_arm64_release }}
         run: opam install . --deps-only --with-test
 
       - name: Build
+        if: ${{ !inputs.macos_arm64_release }}
         run: opam exec -- dune build
 
       - name: Copy built PPX file
+        if: ${{ !inputs.macos_arm64_release }}
         run: |
           mv ./_build/default/bin/bin.exe ppx.exe
+
+      - name: Download verified macOS arm64 release asset
+        if: ${{ inputs.macos_arm64_release }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.macos_arm64_release }}
+          EXPECTED_SHA256: ${{ inputs.macos_arm64_sha256 }}
+        run: |
+          test "$RELEASE_TAG" = "v$(node -p 'require("../package.json").version')"
+          test "${#EXPECTED_SHA256}" -eq 64
+          gh release download "$RELEASE_TAG" --repo "$TARGET_REPO" \
+            --pattern ppx-osx-arm64.exe --output ppx.exe
+          printf '%s  ppx.exe\n' "$EXPECTED_SHA256" | sha256sum --check --strict
+          file ppx.exe | grep -q 'Mach-O 64-bit executable arm64'
+          chmod +x ppx.exe
 
       - name: Upload artifacts
         uses: actions/upload-artifact@master
