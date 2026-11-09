@@ -135,7 +135,7 @@ jobs:
 
   build_macos_arm64:
     name: macOS-arm64
-    runs-on: macos-14
+    runs-on: macos-15
     defaults:
       run:
         working-directory: src
