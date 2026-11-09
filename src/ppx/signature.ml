@@ -10,7 +10,11 @@ let rec add_encoder_params param_names result_type =
   match param_names with
   | [] -> result_type
   | hd :: tl ->
-      [%type: ([%t Ast_helper.Typ.var hd] -> JSON.t) -> [%t result_type]]
+      let encoder_param =
+        [%type: [%t Ast_helper.Typ.var hd] -> JSON.t]
+        |> Utils.ctyp_arrow ~arity:1
+      in
+      [%type: [%t encoder_param] -> [%t result_type]]
       |> Utils.ctyp_arrow ~arity:1 |> add_encoder_params tl
 
 let make_result_type value_type =

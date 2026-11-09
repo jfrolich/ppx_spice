@@ -6,10 +6,10 @@
   "devDependencies": {
     "@jfrolich/ppx-spice": "workspace:../",
     "@dusty-phillips/rescript-zora": "^4.0.0",
-    "@rescript/runtime": "12.0.0",
+    "@rescript/runtime": "12.3.1",
     "onchange": "^7.1.0",
     "pta": "^1.2.0",
-    "rescript": "12.0.0",
+    "rescript": "12.3.1",
     "tap-difflet": "^0.7.2",
     "zora": "^5.2.0"
   },
