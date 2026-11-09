@@ -185,7 +185,7 @@ jobs:
           gh release download "$RELEASE_TAG" --repo "$TARGET_REPO" \
             --pattern ppx-osx-arm64.exe --output ppx.exe
           printf '%s  ppx.exe\n' "$EXPECTED_SHA256" | sha256sum --check --strict
-          file ppx.exe | grep -q 'Mach-O 64-bit executable arm64'
+          python3 -c 'import struct; header = struct.unpack("<4I", open("ppx.exe", "rb").read(16)); assert header[0] == 0xfeedfacf and header[1] == 0x0100000c and header[3] == 2, "Expected a Mach-O arm64 executable"'
           chmod +x ppx.exe
 
       - name: Upload artifacts
