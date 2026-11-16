@@ -381,6 +381,30 @@ let generate_encoder generator_settings unboxed has_attr_as parsed_decls =
   |> Exp.fun_ Asttypes.Nolabel None [%pat? v]
   |> Utils.expr_func ~arity:1
 
+(* An [@unboxed] variant is in JSON what it is in memory: a constructor
+   without payload is its name, one with a payload is that value alone, as
+   if it were [@spice.untagged]. *)
+let unboxed_serde_cases ~tag (cases : Serde.case list) =
+  (match (tag, cases) with
+  | Some _, { loc } :: _ -> fail loc "@unboxed can't be combined with @tag"
+  | _ -> ());
+  let has_payload ({ payload } : Serde.case) =
+    match payload with Serde.Unit -> false | _ -> true
+  in
+  (match
+     ( List.find_opt (fun ({ other } : Serde.case) -> other) cases,
+       List.exists has_payload cases )
+   with
+  | Some { loc }, true ->
+      fail loc
+        "@spice.other can't be combined with an @unboxed constructor with \
+         payload, which already decodes what no name reads"
+  | _ -> ());
+  List.map
+    (fun (case : Serde.case) ->
+      if has_payload case then { case with untagged = true } else case)
+    cases
+
 (* A constructor as the default spice encoding writes it: an array led by
    the constructor's own name, which the legacy decoder reads back. *)
 let legacy_decl decl =
@@ -395,14 +419,15 @@ let generate_codecs ({ do_encode; do_decode } as generator_settings)
   let parsed_decls = List.map (parse_decl generator_settings) constr_decls in
   match generator_settings.serde with
   | Some { tag; legacy_write } ->
-      if unboxed then
-        fail (List.hd constr_decls).pcd_loc
-          "@spice.serde can't be combined with @unboxed";
+      let cases = List.map serde_case parsed_decls in
+      let cases =
+        if unboxed then unboxed_serde_cases ~tag cases else cases
+      in
       let encoder, decoder =
         Serde.generate_codecs generator_settings ~tag
           ~legacy:(fun () ->
             generate_legacy_decoder generator_settings constr_decls)
-          (List.map serde_case parsed_decls)
+          cases
       in
       let encoder =
         if legacy_write && do_encode then
@@ -416,6 +441,11 @@ let generate_codecs ({ do_encode; do_decode } as generator_settings)
   constr_decls
   |> List.iter (fun { pcd_loc; pcd_attributes } ->
          Serde.reject_flags ~loc:pcd_loc pcd_attributes);
+  (match constr_decls with
+  | _ :: { pcd_loc } :: _ when unboxed ->
+      fail pcd_loc
+        "An @unboxed variant with several constructors needs @spice.serde"
+  | _ -> ());
   let count_has_attr =
     parsed_decls |> List.filter (fun v -> v.has_attr_as) |> List.length
   in
