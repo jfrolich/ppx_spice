@@ -94,6 +94,14 @@ zoraBlock("@spice.serde matches Rust serde", t => {
   codec("codec_named", ProRes)
   codec("codec_untagged", Other("h264"))
 
+  let unboxed = (name, v) => check(t, name, v, unboxed_encode, unboxed_decode)
+  unboxed("unboxed_empty", Empty)
+  unboxed("unboxed_flag", Flag(false))
+  unboxed("unboxed_number", Number(-2.5))
+  unboxed("unboxed_text", Text("a"))
+  unboxed("unboxed_list", List([Empty, Number(1.), List([])]))
+  unboxed("unboxed_rect", Rect({w: 1., h: 2.}))
+
   t->test("every golden case is checked", async t => {
     t->equal(
       used.contents->Array.toSorted(String.compare),

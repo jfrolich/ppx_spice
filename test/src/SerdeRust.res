@@ -49,3 +49,12 @@ type withNull = N({b: option<int>})
 type codec =
   | @as("prores") ProRes
   | @spice.untagged Other(string)
+
+@spice.serde @unboxed
+type rec unboxed =
+  | @as("none") Empty
+  | Flag(bool)
+  | Number(float)
+  | Text(string)
+  | List(array<unboxed>)
+  | Rect({w: float, h: float})

@@ -14,11 +14,7 @@ zoraBlock("@spice.other, @spice.alias, @spice.untagged, @spice.fallback", t => {
   t->testEqual("other: unknown name", shadow_decode(json(`"GLOW"`)), Ok(NoShadow))
   t->testEqual("other: unknown object", shadow_decode(json(`{"GLOW": null}`)), Ok(NoShadow))
   t->testEqual("other: encodes its name", shadow_encode(NoShadow), json(`"NONE"`))
-  t->testEqual(
-    "other: not a name still fails",
-    shadow_decode(json(`1`))->Result.isError,
-    true,
-  )
+  t->testEqual("other: not a name still fails", shadow_decode(json(`1`))->Result.isError, true)
   t->testEqual("other: tagged", shape_decode(json(`{"type": "Square"}`)), Ok(UnknownShape))
   t->testEqual(
     "other: tagged known",
@@ -32,11 +28,7 @@ zoraBlock("@spice.other, @spice.alias, @spice.untagged, @spice.fallback", t => {
   t->testEqual("alias: legacy array", scope_decode(json(`["Invite"]`)), Ok(Private))
   t->testEqual("alias: legacy constructor", scope_decode(json(`["Public"]`)), Ok(Public))
   t->testEqual("alias: encodes the name", scope_encode(Org), json(`"ORG"`))
-  t->testEqual(
-    "alias: unknown fails",
-    scope_decode(json(`"Nope"`))->Result.isError,
-    true,
-  )
+  t->testEqual("alias: unknown fails", scope_decode(json(`"Nope"`))->Result.isError, true)
 
   t->testEqual("untagged: named", codec_decode(json(`"prores"`)), Ok(ProRes))
   t->testEqual("untagged: value", codec_decode(json(`"h264"`)), Ok(Other("h264")))
@@ -46,6 +38,18 @@ zoraBlock("@spice.other, @spice.alias, @spice.untagged, @spice.fallback", t => {
     "untagged: keeps the tagged error",
     codec_decode(json(`1`)),
     Error({path: "", message: "Not a variant", value: json(`1`)}),
+  )
+  t->testEqual("untagged: record", area_decode(json(`{"x": 1, "y": 2}`)), Ok(Region({x: 1, y: 2})))
+  t->testEqual(
+    "untagged: encodes the record",
+    area_encode(Region({x: 1, y: 2})),
+    json(`{"x": 1, "y": 2}`),
+  )
+  t->testEqual("untagged: record beside a name", area_decode(json(`"all"`)), Ok(All))
+  t->testEqual(
+    "untagged: record keeps the tagged error",
+    area_decode(json(`{"x": 1}`)),
+    Error({path: "", message: "Invalid variant constructor", value: json(`{"x": 1}`)}),
   )
   t->testEqual(
     "untagged: its name is no tag",
@@ -72,7 +76,11 @@ zoraBlock("@spice.other, @spice.alias, @spice.untagged, @spice.fallback", t => {
   t->testEqual("poly untagged fails", polyText_decode(json(`5`))->Result.isError, true)
   t->testEqual("poly untagged encode", polyText_encode(#Text("a")), json(`"a"`))
 
-  t->testEqual("other: unknown name keyed to null", mixed_decode(json(`{"Square": null}`)), Ok(UnknownMixed))
+  t->testEqual(
+    "other: unknown name keyed to null",
+    mixed_decode(json(`{"Square": null}`)),
+    Ok(UnknownMixed),
+  )
   t->testEqual(
     "other: unknown name keyed to a value fails, like serde",
     mixed_decode(json(`{"Square": 5}`)),

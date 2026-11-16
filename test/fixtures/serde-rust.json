@@ -133,6 +133,19 @@
       "value": 1
     }
   },
+  "unboxed_empty": "none",
+  "unboxed_flag": false,
+  "unboxed_list": [
+    "none",
+    1.0,
+    []
+  ],
+  "unboxed_number": -2.5,
+  "unboxed_rect": {
+    "h": 2.0,
+    "w": 1.0
+  },
+  "unboxed_text": "a",
   "with_null": {
     "b": null,
     "type": "N"

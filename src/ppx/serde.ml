@@ -20,8 +20,9 @@ type case = {
   aliases : string list;
   (* [@spice.other]: a unit constructor any unknown name decodes to. *)
   other : bool;
-  (* [@spice.untagged]: a one-value constructor written as its value alone,
-     decoded from what no named constructor reads. *)
+  (* [@spice.untagged], or a payload constructor of an [@unboxed] variant:
+     written as its one value or inline record alone, decoded from what no
+     named constructor reads. *)
   untagged : bool;
   loc : Location.t;
   payload : payload;
@@ -130,8 +131,11 @@ let validate_flags cases =
   untagged
   |> List.iter (fun { loc; payload; aliases } ->
          (match payload with
-         | Args [ _ ] -> ()
-         | _ -> fail loc "@spice.untagged needs a constructor with one value");
+         | Args [ _ ] | Record _ -> ()
+         | _ ->
+             fail loc
+               "@spice.untagged needs a constructor with one value or an \
+                inline record");
          if aliases <> [] then
            fail loc "An @spice.untagged constructor has no name to alias");
   match (others, untagged) with
@@ -179,6 +183,8 @@ let encoder_case generator_settings ~tag { name; payload; lhs; untagged } =
   let rhs =
     match (payload, tag) with
     | Args [ arg ], _ when untagged -> encode_arg generator_settings arg "v0"
+    | Record fields, _ when untagged ->
+        Records.generate_inline_record_encoder_expr generator_settings fields
     | Unit, None -> [%expr JSON.String [%e str name]]
     | Unit, Some tag ->
         json_object [ [%expr [%e str tag], JSON.String [%e str name]] ]
@@ -306,7 +312,22 @@ let rec decode_untagged generator_settings cases ~error =
         | Ok v0 -> Ok [%e construct (Some [%expr v0])]
         | Error _ ->
             [%e decode_untagged generator_settings rest ~error]]
-  | { loc } :: _ -> fail loc "@spice.untagged needs a constructor with one value"
+  | { payload = Record fields; constructor } :: rest ->
+      [%expr
+        match
+          match v with
+          | JSON.Object dict ->
+              [%e
+                Records.generate_inline_record_decoder_expr generator_settings
+                  fields constructor]
+          | _ -> Spice.error "Not an object" v
+        with
+        | Ok _ as ok -> ok
+        | Error _ ->
+            [%e decode_untagged generator_settings rest ~error]]
+  | { loc } :: _ ->
+      fail loc
+        "@spice.untagged needs a constructor with one value or an inline record"
 
 let generate_decoder generator_settings ~tag ~legacy cases =
   (* serde writes a unit constructor as a bare string only when externally
