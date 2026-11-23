@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased
+## 0.11.0
 
 - `@spice.serde` with ReScript's `@unboxed` (untagged variants): a value is in JSON what it is in memory. A constructor without payload is its name (`@as("...")` or the constructor), and every constructor with a payload is written as its value alone, as if it were `@spice.untagged`, so `@unboxed type t = | @as("DONE") Done | Other(string)` needs no codec of its own. See [Unboxed variants](docs/GUIDE.md#unboxed-variants).
 - `@spice.untagged` also takes a constructor with an inline record, written as that object alone.
