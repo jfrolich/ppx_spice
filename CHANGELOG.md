@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Unreleased
+
+- `@spice.serde` with ReScript's `@unboxed` (untagged variants): a value is in JSON what it is in memory. A constructor without payload is its name (`@as("...")` or the constructor), and every constructor with a payload is written as its value alone, as if it were `@spice.untagged`, so `@unboxed type t = | @as("DONE") Done | Other(string)` needs no codec of its own. See [Unboxed variants](docs/GUIDE.md#unboxed-variants).
+- `@spice.untagged` also takes a constructor with an inline record, written as that object alone.
+- An `@unboxed` variant with several constructors fails with a message saying it needs `@spice.serde`, instead of crashing the PPX with `Failure("hd")`.
+
 ## 0.10.1
 
 - Fix: on ReScript 12, a `.resi` declaring a `@spice` type with type parameters (`@spice type t<'a> = ...`) no longer fails with "Values do not match" against its implementation; the encoder argument in the generated signature (`'a => JSON.t`) now has arity 1, like the decoder's. ReScript 13 was not affected.

@@ -18,3 +18,4 @@ include Serde_edge_test
 include Serde_random_test
 include Serde_legacy_write_test
 include Serde_extras_test
+include Serde_unboxed_test

@@ -87,6 +87,31 @@ Zora.test("@spice.other, @spice.alias, @spice.untagged, @spice.fallback", t => {
       value: JSON.parse(`1`)
     }
   });
+  testEqual(t, "untagged: record", SerdeExtras.area_decode(JSON.parse(`{"x": 1, "y": 2}`)), {
+    TAG: "Ok",
+    _0: {
+      TAG: "Region",
+      x: 1,
+      y: 2
+    }
+  });
+  testEqual(t, "untagged: encodes the record", SerdeExtras.area_encode({
+    TAG: "Region",
+    x: 1,
+    y: 2
+  }), JSON.parse(`{"x": 1, "y": 2}`));
+  testEqual(t, "untagged: record beside a name", SerdeExtras.area_decode(JSON.parse(`"all"`)), {
+    TAG: "Ok",
+    _0: "all"
+  });
+  testEqual(t, "untagged: record keeps the tagged error", SerdeExtras.area_decode(JSON.parse(`{"x": 1}`)), {
+    TAG: "Error",
+    _0: {
+      path: "",
+      message: "Invalid variant constructor",
+      value: JSON.parse(`{"x": 1}`)
+    }
+  });
   testEqual(t, "untagged: its name is no tag", Stdlib_Result.isError(SerdeExtras.codec_decode(JSON.parse(`{"Other": "x"}`))), true);
   testEqual(t, "fallback: decodes", SerdeExtras.background_decode(JSON.parse(`{"Image": "u"}`)), {
     TAG: "Ok",

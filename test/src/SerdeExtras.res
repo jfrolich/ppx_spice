@@ -52,3 +52,9 @@ type mixed =
 type legacyOther =
   | Known
   | @spice.other UnknownLegacy
+
+// @spice.untagged on an inline record: the object alone.
+@spice.serde
+type area =
+  | @as("all") All
+  | @spice.untagged Region({x: int, y: int})

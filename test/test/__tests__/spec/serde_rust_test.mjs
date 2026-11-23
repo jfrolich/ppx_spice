@@ -197,6 +197,20 @@ Zora.test("@spice.serde matches Rust serde", t => {
     TAG: "Other",
     _0: "h264"
   });
+  let unboxed = (name, v) => check(t, name, v, SerdeRust.unboxed_encode, SerdeRust.unboxed_decode);
+  unboxed("unboxed_empty", "none");
+  unboxed("unboxed_flag", false);
+  unboxed("unboxed_number", -2.5);
+  unboxed("unboxed_text", "a");
+  unboxed("unboxed_list", [
+    "none",
+    1,
+    []
+  ]);
+  unboxed("unboxed_rect", {
+    w: 1,
+    h: 2
+  });
   t.test("every golden case is checked", async t => {
     t.equal(used.contents.toSorted(Primitive_string.compare), Object.keys(golden).toSorted(Primitive_string.compare), "cases");
   });

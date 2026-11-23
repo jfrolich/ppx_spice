@@ -16,6 +16,7 @@ import * as Serde_random_test from "./spec/serde_random_test.mjs";
 import * as Serde_strict_test from "./spec/serde_strict_test.mjs";
 import * as Encode_decode_test from "./spec/encode_decode_test.mjs";
 import * as Raising_field_test from "./spec/raising_field_test.mjs";
+import * as Serde_unboxed_test from "./spec/serde_unboxed_test.mjs";
 import * as Top_level_options_test from "./spec/top_level_options_test.mjs";
 import * as Serde_legacy_write_test from "./spec/serde_legacy_write_test.mjs";
 import * as Generic_type_params_test from "./spec/generic_type_params_test.mjs";
@@ -79,9 +80,9 @@ let tree = Serde_random_test.tree;
 
 let check = Serde_random_test.check;
 
-let testEqual = Serde_extras_test.testEqual;
+let testEqual = Serde_unboxed_test.testEqual;
 
-let json = Serde_extras_test.json;
+let json = Serde_unboxed_test.json;
 
 export {
   dataObject,

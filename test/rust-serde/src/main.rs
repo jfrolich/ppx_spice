@@ -100,6 +100,24 @@ enum Codec {
     Other(String),
 }
 
+/// An `@unboxed` ReScript variant: every variant with a payload is
+/// `untagged`.
+#[derive(Serialize)]
+enum Unboxed {
+    #[serde(rename = "none")]
+    Empty,
+    #[serde(untagged)]
+    Flag(bool),
+    #[serde(untagged)]
+    Number(f64),
+    #[serde(untagged)]
+    Text(String),
+    #[serde(untagged)]
+    List(Vec<Unboxed>),
+    #[serde(untagged)]
+    Rect { w: f64, h: f64 },
+}
+
 /// Written with `null` for `None`, serde's default, to check spice reads it.
 #[derive(Serialize)]
 #[serde(tag = "type")]
@@ -177,6 +195,15 @@ fn main() {
     add("with_null", to(&WithNull::N { b: None }));
     add("codec_named", to(&Codec::ProRes));
     add("codec_untagged", to(&Codec::Other("h264".into())));
+    add("unboxed_empty", to(&Unboxed::Empty));
+    add("unboxed_flag", to(&Unboxed::Flag(false)));
+    add("unboxed_number", to(&Unboxed::Number(-2.5)));
+    add("unboxed_text", to(&Unboxed::Text("a".into())));
+    add(
+        "unboxed_list",
+        to(&Unboxed::List(vec![Unboxed::Empty, Unboxed::Number(1.0), Unboxed::List(vec![])])),
+    );
+    add("unboxed_rect", to(&Unboxed::Rect { w: 1.0, h: 2.0 }));
 
     let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../fixtures/serde-rust.json");
     let text = serde_json::to_string_pretty(&json!(cases)).unwrap();
