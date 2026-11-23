@@ -1295,6 +1295,129 @@ function legacyOther_decode(v) {
   }
 }
 
+function area_encode(v) {
+  if (typeof v !== "object") {
+    return "all";
+  } else {
+    return Object.fromEntries(Spice.filterOptional([
+      [
+        "x",
+        Spice.intToJson(v.x)
+      ],
+      [
+        "y",
+        Spice.intToJson(v.y)
+      ]
+    ]));
+  }
+}
+
+function area_encodeJson(v) {
+  if (typeof v !== "object") {
+    return "all";
+  } else {
+    return Object.fromEntries(Spice.filterOptional([
+      [
+        "x",
+        Spice.intToJson(v.x)
+      ],
+      [
+        "y",
+        Spice.intToJson(v.y)
+      ]
+    ]));
+  }
+}
+
+function area_decode(v) {
+  let ok;
+  if (v === null) {
+    ok = Spice.error(undefined, "Not a variant", v);
+  } else if (Array.isArray(v)) {
+    ok = Spice.error(undefined, "Expected variant, found array", v);
+  } else {
+    switch (typeof v) {
+      case "string" :
+        ok = v === "all" ? ({
+            TAG: "Ok",
+            _0: "all"
+          }) : Spice.error(undefined, "Invalid variant constructor", v);
+        break;
+      case "boolean" :
+      case "number" :
+        ok = Spice.error(undefined, "Not a variant", v);
+        break;
+      case "object" :
+        let match = Object.entries(v);
+        if (match.length !== 1) {
+          ok = Spice.error(undefined, "Expected an object with one key", v);
+        } else {
+          let match$1 = match[0];
+          let payload = match$1[1];
+          if (match$1[0] === "all") {
+            let v$1;
+            v$1 = payload === null ? ({
+                TAG: "Ok",
+                _0: "all"
+              }) : Spice.error(undefined, "Expected null", payload);
+            if (v$1.TAG === "Ok") {
+              ok = {
+                TAG: "Ok",
+                _0: v$1._0
+              };
+            } else {
+              let e = v$1._0;
+              ok = {
+                TAG: "Error",
+                _0: {
+                  path: ".all" + e.path,
+                  message: e.message,
+                  value: e.value
+                }
+              };
+            }
+          } else {
+            ok = Spice.error(undefined, "Invalid variant constructor", v);
+          }
+        }
+        break;
+    }
+  }
+  if (ok.TAG === "Ok") {
+    return ok;
+  }
+  let ok$1;
+  if (typeof v === "object" && v !== null && !Array.isArray(v)) {
+    let spice_field_x = Stdlib_Option.getOr(Stdlib_Option.map(v["x"], Spice.intFromJson), Spice.error(undefined, "x" + " missing", v));
+    if (spice_field_x.TAG === "Ok") {
+      let spice_field_y = Stdlib_Option.getOr(Stdlib_Option.map(v["y"], Spice.intFromJson), Spice.error(undefined, "y" + " missing", v));
+      if (spice_field_y.TAG === "Ok") {
+        ok$1 = {
+          TAG: "Ok",
+          _0: {
+            TAG: "Region",
+            x: spice_field_x._0,
+            y: spice_field_y._0
+          }
+        };
+      } else {
+        let e$1 = spice_field_y._0;
+        ok$1 = Spice.error("." + ("y" + e$1.path), e$1.message, e$1.value);
+      }
+    } else {
+      let e$2 = spice_field_x._0;
+      ok$1 = Spice.error("." + ("x" + e$2.path), e$2.message, e$2.value);
+    }
+  } else {
+    ok$1 = Spice.error(undefined, "Not an object", v);
+  }
+  if (ok$1.TAG === "Ok") {
+    return ok$1;
+  } else {
+    return ok;
+  }
+}
+
 export {
   shadow_encode,
   shadow_encodeJson,
@@ -1329,5 +1452,8 @@ export {
   legacyOther_encode,
   legacyOther_encodeJson,
   legacyOther_decode,
+  area_encode,
+  area_encodeJson,
+  area_decode,
 }
 /* No side effect */

@@ -1,2 +1,2 @@
-@spice.serde @unboxed
-type t = A(int)
+@spice.serde @unboxed @tag("type")
+type t = A({x: int}) | B

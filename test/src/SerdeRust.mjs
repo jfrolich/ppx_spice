@@ -2395,6 +2395,178 @@ function codec_decode(v) {
   }
 }
 
+function unboxed_decode(v) {
+  let ok;
+  if (v === null) {
+    ok = Spice.error(undefined, "Not a variant", v);
+  } else if (Array.isArray(v)) {
+    ok = Spice.error(undefined, "Expected variant, found array", v);
+  } else {
+    switch (typeof v) {
+      case "string" :
+        ok = v === "none" ? ({
+            TAG: "Ok",
+            _0: "none"
+          }) : Spice.error(undefined, "Invalid variant constructor", v);
+        break;
+      case "boolean" :
+      case "number" :
+        ok = Spice.error(undefined, "Not a variant", v);
+        break;
+      case "object" :
+        let match = Object.entries(v);
+        if (match.length !== 1) {
+          ok = Spice.error(undefined, "Expected an object with one key", v);
+        } else {
+          let match$1 = match[0];
+          let payload = match$1[1];
+          if (match$1[0] === "none") {
+            let v$1;
+            v$1 = payload === null ? ({
+                TAG: "Ok",
+                _0: "none"
+              }) : Spice.error(undefined, "Expected null", payload);
+            if (v$1.TAG === "Ok") {
+              ok = {
+                TAG: "Ok",
+                _0: v$1._0
+              };
+            } else {
+              let e = v$1._0;
+              ok = {
+                TAG: "Error",
+                _0: {
+                  path: ".none" + e.path,
+                  message: e.message,
+                  value: e.value
+                }
+              };
+            }
+          } else {
+            ok = Spice.error(undefined, "Invalid variant constructor", v);
+          }
+        }
+        break;
+    }
+  }
+  if (ok.TAG === "Ok") {
+    return ok;
+  }
+  let v0 = Spice.boolFromJson(v);
+  if (v0.TAG === "Ok") {
+    return {
+      TAG: "Ok",
+      _0: v0._0
+    };
+  }
+  let v0$1 = Spice.floatFromJson(v);
+  if (v0$1.TAG === "Ok") {
+    return {
+      TAG: "Ok",
+      _0: v0$1._0
+    };
+  }
+  let v0$2 = Spice.stringFromJson(v);
+  if (v0$2.TAG === "Ok") {
+    return {
+      TAG: "Ok",
+      _0: v0$2._0
+    };
+  }
+  let v0$3 = Spice.arrayFromJson(unboxed_decode, v);
+  if (v0$3.TAG === "Ok") {
+    return {
+      TAG: "Ok",
+      _0: v0$3._0
+    };
+  }
+  let ok$1;
+  if (typeof v === "object" && v !== null && !Array.isArray(v)) {
+    let spice_field_w = Stdlib_Option.getOr(Stdlib_Option.map(v["w"], Spice.floatFromJson), Spice.error(undefined, "w" + " missing", v));
+    if (spice_field_w.TAG === "Ok") {
+      let spice_field_h = Stdlib_Option.getOr(Stdlib_Option.map(v["h"], Spice.floatFromJson), Spice.error(undefined, "h" + " missing", v));
+      if (spice_field_h.TAG === "Ok") {
+        ok$1 = {
+          TAG: "Ok",
+          _0: {
+            w: spice_field_w._0,
+            h: spice_field_h._0
+          }
+        };
+      } else {
+        let e$1 = spice_field_h._0;
+        ok$1 = Spice.error("." + ("h" + e$1.path), e$1.message, e$1.value);
+      }
+    } else {
+      let e$2 = spice_field_w._0;
+      ok$1 = Spice.error("." + ("w" + e$2.path), e$2.message, e$2.value);
+    }
+  } else {
+    ok$1 = Spice.error(undefined, "Not an object", v);
+  }
+  if (ok$1.TAG === "Ok") {
+    return ok$1;
+  } else {
+    return ok;
+  }
+}
+
+function unboxed_encodeJson(v) {
+  if (v === "none") {
+    return "none";
+  }
+  if (Array.isArray(v)) {
+    return Spice.arrayToJson(unboxed_encodeJson, v);
+  }
+  switch (typeof v) {
+    case "boolean" :
+      return Spice.boolToJson(v);
+    case "number" :
+      return Spice.floatToJson(v);
+    case "string" :
+      return Spice.stringToJson(v);
+    case "object" :
+      return Object.fromEntries(Spice.filterOptional([
+        [
+          "w",
+          Spice.floatToJson(v.w)
+        ],
+        [
+          "h",
+          Spice.floatToJson(v.h)
+        ]
+      ]));
+  }
+}
+
+function unboxed_encode(v) {
+  if (v === "none") {
+    return "none";
+  }
+  if (Array.isArray(v)) {
+    return Spice.arrayToJson(unboxed_encodeJson, v);
+  }
+  switch (typeof v) {
+    case "boolean" :
+      return Spice.boolToJson(v);
+    case "number" :
+      return Spice.floatToJson(v);
+    case "string" :
+      return Spice.stringToJson(v);
+    case "object" :
+      return Object.fromEntries(Spice.filterOptional([
+        [
+          "w",
+          Spice.floatToJson(v.w)
+        ],
+        [
+          "h",
+          Spice.floatToJson(v.h)
+        ]
+      ]));
+  }
+}
+
 export {
   size_encode,
   size_encodeJson,
@@ -2426,5 +2598,8 @@ export {
   codec_encode,
   codec_encodeJson,
   codec_decode,
+  unboxed_encode,
+  unboxed_encodeJson,
+  unboxed_decode,
 }
 /* No side effect */
